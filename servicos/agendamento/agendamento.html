@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Agendamento | CHATUAL DU PET</title>
+    <link rel="icon" type="image/png" href="../home_principal/img/logo_pequena.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../home_principal/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container">
+             <a class="btn text-white d-flex align-items-center" href="../home_principal/home.html" style="text-decoration: none;">
+                <img src="../home_principal/img/arrow.png" alt="Voltar" width="24" height="24" style="filter: invert(1); margin-right: 5px;">
+                <span class="d-none d-sm-inline">Voltar</span>
+            </a>
+            <a class="navbar-brand fw-bold text-white d-flex align-items-center mx-auto" href="../home_principal/home.html">
+                <img src="../home_principal/img/logo_pequena.png" alt="Logo" class="rounded-circle me-2" width="40" height="40">
+                <span class="d-none d-md-inline">AGENDAMENTO DE SERVIÇOS</span>
+            </a>
+            <div style="width: 80px;"></div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card p-4 p-md-5">
+                    <h1 class="text-center mb-4 main-purple-text fw-bold">Agende um Horário</h1>
+                    <p class="text-center text-muted mb-4">Preencha o formulário abaixo para solicitar seu agendamento. Nossa equipe entrará em contato para confirmar a data e o horário.</p>
+                    <form id="agendamentoForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="tutorNome" class="form-label">Nome do Tutor</label>
+                                <input type="text" class="form-control" id="tutorNome" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="petNome" class="form-label">Nome do Pet</label>
+                                <input type="text" class="form-control" id="petNome" required>
+                            </div>
+                             <div class="col-md-6">
+                                <label for="telefone" class="form-label">Telefone (com WhatsApp)</label>
+                                <input type="tel" class="form-control" id="telefone" required>
+                            </div>
+                             <div class="col-md-6">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="servico" class="form-label">Serviço Desejado</label>
+                                <select class="form-select" id="servico" required>
+                                    <option selected disabled value="">Selecione...</option>
+                                    <option>Banho & Tosa</option>
+                                    <option>Consulta Veterinária</option>
+                                    <option>Hospedagem (Hotel)</option>
+                                    <option>Creche (Day Care)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="unidade" class="form-label">Unidade de Preferência</label>
+                                <select class="form-select" id="unidade" required>
+                                    <option selected disabled value="">Selecione...</option>
+                                    <option>Mooca</option>
+                                    <option>Tatuapé</option> <option>Santos</option>
+                                </select>
+                            </div>
+                             <div class="col-md-6">
+                                <label for="data" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="data" required>
+                            </div>
+                             <div class="col-md-6">
+                                <label for="hora" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="hora" required>
+                            </div>
+                            <div class="col-12">
+                                 <label for="observacoes" class="form-label">Observações</label>
+                                 <textarea class="form-control" id="observacoes" rows="3" placeholder="Ex: Meu pet é alérgico a algum produto? Possui alguma condição especial?"></textarea>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-custom btn-lg mt-3">Solicitar Agendamento</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer><p>© 2025 CHATUAL DU PET - Todos os direitos reservados</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('agendamentoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Agendamento solicitado com sucesso! Nossa equipe entrará em contato em breve para confirmar.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

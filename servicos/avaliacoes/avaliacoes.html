@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Avaliações | CHATUAL DU PET</title>
+    <link rel="icon" type="image/png" href="../home_principal/img/logo_pequena.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../home_principal/css/style.css">
+    <style>
+        /* ESTILOS ATUALIZADOS AQUI */
+        .review-card {
+            background-color: #89006A; /* Cor de fundo roxa, padrão do site */
+            color: #fff; /* Cor do texto principal (avaliação) em branco */
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem; /* Aumentei o espaçamento inferior para separar mais */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .review-author {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .review-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid #fff; /* Adiciona uma borda branca na foto */
+        }
+        .review-author .name {
+            font-weight: 600;
+            color: #fff; /* Garante que o nome fique branco */
+        }
+        .review-author .stars {
+            color: #fdcc0d; /* Cor das estrelas mantida em amarelo */
+            font-size: 0.9rem;
+        }
+        .navbar-brand {
+             font-family: 'Playfair Display', serif !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container">
+             <a class="btn text-white d-flex align-items-center" href="../home_principal/home.html" style="text-decoration: none;">
+                <img src="../home_principal/img/arrow.png" alt="Voltar" width="24" height="24" style="filter: invert(1); margin-right: 5px;">
+                <span class="d-none d-sm-inline">Voltar</span>
+            </a>
+            <a class="navbar-brand fw-bold text-white d-flex align-items-center mx-auto" href="../home_principal/home.html">
+                <img src="../home_principal/img/logo_pequena.png" alt="Logo" class="rounded-circle me-2" width="40" height="40">
+                <span class="d-none d-md-inline">AVALIAÇÃO DOS CLIENTES</span>
+            </a>
+            <div style="width: 80px;"></div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <h1 class="text-center mb-5 main-purple-text fw-bold">O que nossos clientes dizem</h1>
+        <div class="row">
+            <div class="col-lg-6 d-flex flex-column">
+                <div class="review-card">
+                    <p>"O lugar é muito bonito e gostoso, vale a pena dar uma volta com o seu pet. São vários ambientes e várias opções de atendimento para o seu filho de 4 patas. Lugar agradável e que percebi um carinho especial com os pets."</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Valéria Ferreira</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="review-card">
+                    <p>"Gente, o lugar é simplesmente encantador. Você deixa o pet brincando e ainda toma o chá da tarde. Pensa em um lugar delicioso para os pets e pra nós. Uma paz sem igual."</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Daniela Mayer</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <p>"Lugar fantástico, espaçoso, agradável atendimento 5 estrelas... Meu pet feliz e eu satisfeito."</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Paulo R. do C. Santos</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="review-card">
+                    <p>"Ótimo atendimento! Sempre que possível, levo o meu cachorro. Vale a pena!"</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Wellington Silvano</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-flex flex-column">
+                <div class="review-card">
+                    <p>"Excelente lugar para você que ama seu Pet. Vale a pena conhecer, tanto serviços quanto atendimentos são ótimos. Parabéns a todos envolvidos!"</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Daniels Souza</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <p>"Lugar maravilhoso, acolhedor e cheio de amor. Sempre que preciso deixo nosso cãozinho no serviço de hotel deles, preços justos, limpeza impecável, donos super simpáticos. Nitidamente gostam do que fazem. Mais que indico!"</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Rogério R.</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <p>"Lugar lindo! Estrutura fantástica. A dedicação e carinho com os pets é visível. Parabéns! Você leva seu cachorro e fica tomando um café com um delicioso croissant."</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Sandra Abreu</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <p>"Melhor Pet que já fui. Nunca tinha conhecido nada com tanta estrutura. Superdiferenciado o espaço, profissionais supercapacitados. Só confio minha filhinha de 4 patas a eles."</p>
+                    <div class="review-author">
+                        <img src="../home_principal/img/logo_pequena.png" alt="Avatar Cliente">
+                        <div>
+                            <div class="name">Beatriz Macieira</div>
+                            <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer><p>© 2025 CHATUAL DU PET - Todos os direitos reservados</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CHATUAL DU PET</title>
+    <link rel="icon" type="image/png" href="img/logo_pequena.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column align-items-start">
+            <div class="d-flex w-100 align-items-center justify-content-between">
+                <div class="d-flex align-items-center me-3 menu-todos">
+                    <button class="btn text-white d-flex align-items-center" id="button-menu">
+                        <span class="navbar-toggler-icon me-2"></span>
+                        <span class="d-none d-sm-inline">Todos</span>
+                    </button>
+                </div>
+                <form class="d-flex mx-3 w-100 search-form d-none d-sm-flex" action="/busca" method="GET">
+                    <input class="form-control" type="search" name="q" placeholder="O que você procura?" aria-label="Pesquisar">
+                    <button class="btn-search" type="submit" aria-label="Pesquisar">
+                        <img src="img/pesquisar.png" alt="Pesquisar" width="20" height="20">
+                    </button>
+                </form>
+                <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
+                    <li class="nav-item d-block d-sm-none me-3"><a class="nav-link text-white" href="#" id="busca-celular"><img src="img/pesquisar.png" alt="Buscar"></a></li>
+                    <li class="nav-item me-3"><a class="nav-link text-white" href="favorito/favorito.html" id="favorito"><img src="img/favorito.png" alt="Favorito"></a></li>
+                    <li class="nav-item me-3"><a class="nav-link text-white" href="carrinho/carrinho.html" id="carrinho"><img src="img/carrinho_de_compra.png" alt="Carrinho"></a></li>
+                    
+                    <li class="nav-item profile-link-container">
+                        <a class="nav-link text-white d-flex align-items-center" href="login/login.html" id="perfil-text">
+                            <img src="img/vector.png" alt="Perfil" class="profile-icon me-1">
+                            <span class="d-none d-lg-block" style="white-space: nowrap;">Entrar / Cadastre-se</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="w-100 d-flex align-items-center location-bar mt-2">
+                <img src="img/logo_pequena.png" alt="Logo Chatual Du Pet" class="localizacao-logo me-2" width="20" height="20">
+                <span id="unidade-proxima" class="text-white">Buscando a unidade mais próxima...</span>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <img src="img/logo_pequena.png" alt="Perfil" class="sidebar-logo">
+            <div>
+                <p class="fw-bold mb-0">Bem-vindo!</p>
+                <a href="login/login.html">Entre ou Cadastre-se</a>
+            </div>
+            <button id="close-sidebar" class="btn-close"></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item"><button class="submenu-toggle">🐶 Cachorros</button><ul class="submenu"><li><a href="#">Rações</a></li><li><a href="#">Brinquedos</a></li><li><a href="#">Camas</a></li><li><a href="#">Coleiras</a></li></ul></li>
+            <li class="menu-item"><button class="submenu-toggle">🐱 Gatos</button><ul class="submenu"><li><a href="#">Rações</a></li><li><a href="#">Arranhadores</a></li><li><a href="#">Areia Sanitária</a></li></ul></li>
+            <li class="menu-item"><button class="submenu-toggle">🐦 Pássaros</button><ul class="submenu"><li><a href="#">Alimentação</a></li><li><a href="#">Gaiolas</a></li><li><a href="#">Brinquedos</a></li></ul></li>
+            <li><a href="veterinaria/veterinaria.html">🐾 Veterinária</a></li>
+            <li><a href="hotel/hotel.html">🏨 Hotel</a></li>
+            <li><a href="servicos/servicos.html">✂️ Estética</a></li>
+            <li><a href="day_care/day_care.html">🎉 Day Care</a></li>
+            <li><a href="agendamento/agendamento.html">📅 Agendamento</a></li>
+            <li><a href="contatos/contatos.html">📞 Contatos</a></li>
+            <li><a href="avaliacoes/avaliacoes.html">⭐ Avaliações</a></li>
+            <li><a href="#">ℹ️ Sobre</a></li>
+        </ul>
+    </div>
+    <div id="overlay"></div>
+
+    <div class="container my-4">
+        <div class="carousel-container d-flex align-items-center justify-content-center">
+            <button class="carousel-nav-side" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev" aria-label="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <div id="bannerCarousel" class="carousel slide w-100" data-bs-ride="carousel">
+                <div class="carousel-inner rounded-3 overflow-hidden">
+                    <div class="carousel-item active">
+                        <img src="img/banner.jpeg" class="d-block w-100" alt="Banner 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/banner3.jpeg" class="d-block w-100" alt="Banner 2">
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-nav-side" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next" aria-label="Próximo">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+        <div class="carousel-indicators-custom d-flex justify-content-center mt-3">
+            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        </div>
+    </div>
+    <section class="container my-3 services-section">
+        <div class="services-row justify-content-center"> 
+            <a href="lojas/lojas.html" class="service-pill"><div class="service-text"><div class="service-title">Lojas</div><div class="service-sub">Preços e economia</div></div><div class="service-icon-box"><img src="img/logo_pequena.png" alt="Logo Lojas" class="service-logo"></div></a>
+            <a href="veterinaria/veterinaria.html" class="service-pill"><div class="service-text"><div class="service-title">Veterinária</div><div class="service-sub">Agende um horário</div></div><div class="service-icon-box"><img src="img/logo_pequena.png" alt="Logo Veterinária" class="service-logo"></div></a>
+            <a href="hotel/hotel.html" class="service-pill"><div class="service-text"><div class="service-title">Hotel</div><div class="service-sub">Agende um horário</div></div><div class="service-icon-box"><img src="img/logo_pequena.png" alt="Logo Hotel" class="service-logo"></div></a>
+            <a href="servicos/servicos.html" class="service-pill"><div class="service-text"><div class="service-title">Serviços Pet</div><div class="service-sub">Banho & Tosa</div></div><div class="service-icon-box"><img src="img/logo_pequena.png" alt="Logo Serviços Pet" class="service-logo"></div></a>
+            <a href="day_care/day_care.html" class="service-pill"><div class="service-text"><div class="service-title">Day Care</div><div class="service-sub">Transformando vidas</div></div><div class="service-icon-box"><img src="img/logo_pequena.png" alt="Logo Day Care" class="service-logo"></div></a>
+        </div>
+    </section>
+
+    <div class="container my-5">
+        <div class="product-slider-wrapper">
+            <h2 class="mb-4 slider-title">Super ofertas do dia :</h2>
+            <button class="slider-nav prev-btn" id="ofertas-prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-track" id="ofertas-track">
+                <div class="card h-100"><img src="img/racao1.webp" class="card-img-top" alt="Ração 1"><div class="card-body"><h5 class="card-title">Ração Premium</h5><p class="card-text">Oferta imperdível.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao2.webp" class="card-img-top" alt="Ração 2"><div class="card-body"><h5 class="card-title">Ração Úmida</h5><p class="card-text">Sabor e hidratação.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao3.webp" class="card-img-top" alt="Ração 3"><div class="card-body"><h5 class="card-title">Ração Natural</h5><p class="card-text">Ingredientes selecionados.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao4.jpg" class="card-img-top" alt="Ração 4"><div class="card-body"><h5 class="card-title">Ração Seca Cães</h5><p class="card-text">Nutrição completa.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao5.jpg" class="card-img-top" alt="Ração 5"><div class="card-body"><h5 class="card-title">Ração Gatos Filhotes</h5><p class="card-text">Desenvolvimento.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao6.jpg" class="card-img-top" alt="Ração 6"><div class="card-body"><h5 class="card-title">Ração Golden</h5><p class="card-text">Rações especiais.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao7.jpg" class="card-img-top" alt="Ração 7"><div class="card-body"><h5 class="card-title">Ração Frango</h5><p class="card-text">Alta digestibilidade.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao8.jpg" class="card-img-top" alt="Ração 8"><div class="card-body"><h5 class="card-title">Ração Salmão</h5><p class="card-text">Pelos brilhantes.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+            </div>
+            <button class="slider-nav next-btn" id="ofertas-next" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
+    <div class="container my-5">
+        <a href="#"><img src="img/banner3.jpeg" class="img-fluid rounded-3 banner-promo-full" alt="Banner promocional"></a>
+    </div>
+
+    <section class="container my-5">
+        <div class="product-slider-wrapper">
+            <h2 class="slider-title mb-4">Recomendados para você</h2>
+            <button class="slider-nav prev-btn" id="recomendados-prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-track" id="recomendados-track">
+                                <a href="produto/prod.html" class="card h-100 product-link-card">
+                    <img src="img/racao1.webp" class="card-img-top" alt="Ração Úmida GranPlus">
+                    <div class="card-body">
+                        <h5 class="card-title">GranPlus Carne</h5>
+                        <p class="card-text">Sabor irresistível.</p>
+                        <span class="btn btn-custom">R$ 15,90</span>
+                    </div>
+                </a>
+                                <div class="card h-100"><img src="img/racao2.webp" class="card-img-top" alt="Ração Úmida GranPlus"><div class="card-body"><h5 class="card-title">Ração Seca Premium</h5><p class="card-text">Alta qualidade.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 69,90</a></div></div>
+                <div class="card h-100"><img src="img/racao3.webp" class="card-img-top" alt="Petisco Natural"><div class="card-body"><h5 class="card-title">Petisco Natural</h5><p class="card-text">Para o dia a dia.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 17,90</a></div></div>
+                <div class="card h-100"><img src="img/racao4.jpg" class="card-img-top" alt="Ração Seca Filhotes"><div class="card-body"><h5 class="card-title">Ração Filhotes</h5><p class="card-text">Desenvolvimento.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 45,00</a></div></div>
+                <div class="card h-100"><img src="img/racao5.jpg" class="card-img-top" alt="Ração Gatos"><div class="card-body"><h5 class="card-title">Ração Gatos Sênior</h5><p class="card-text">Fácil digestão.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 55,00</a></div></div>
+                <div class="card h-100"><img src="img/racao6.jpg" class="card-img-top" alt="Ossinhos"><div class="card-body"><h5 class="card-title">Kit Ossinhos</h5><p class="card-text">Para mastigar.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 25,00</a></div></div>
+                <div class="card h-100"><img src="img/racao7.jpg" class="card-img-top" alt="Caminha Pet"><div class="card-body"><h5 class="card-title">Caminha Conforto</h5><p class="card-text">Super macia.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 120,00</a></div></div>
+                <div class="card h-100"><img src="img/racao8.jpg" class="card-img-top" alt="Shampoo Pet"><div class="card-body"><h5 class="card-title">Shampoo Anti-Pulgas</h5><p class="card-text">Proteção total.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 35,00</a></div></div>
+            </div>
+            <button class="slider-nav next-btn" id="recomendados-next" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </section>
+    <section class="container my-5">
+        <h2 class="mb-4 slider-title">Novidades para seu Pet</h2>
+        <div class="product-slider-wrapper">
+            <button class="slider-nav prev-btn" id="novidades-prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-track" id="novidades-track">
+                <div class="card h-100"><img src="img/racao1.webp" class="card-img-top" alt="Novidade 1"><div class="card-body"><h5 class="card-title">Ração Wet Food</h5><p class="card-text">Nova embalagem.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao2.webp" class="card-img-top" alt="Novidade 2"><div class="card-body"><h5 class="card-title">Coleira LED</h5><p class="card-text">Passeio noturno.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao3.webp" class="card-img-top" alt="Novidade 3"><div class="card-body"><h5 class="card-title">Brinquedo Corda</h5><p class="card-text">Super resistente.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao4.jpg" class="card-img-top" alt="Novidade 4"><div class="card-body"><h5 class="card-title">Tapete Higiênico</h5><p class="card-text">Alta absorção.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao5.jpg" class="card-img-top" alt="Novidade 5"><div class="card-body"><h5 class="card-title">Pá para Areia</h5><p class="card-text">Design ergonômico.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao6.jpg" class="card-img-top" alt="Novidade 6"><div class="card-body"><h5 class="card-title">Luva Tira Pelos</h5><p class="card-text">Escovação fácil.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao7.jpg" class="card-img-top" alt="Novidade 7"><div class="card-body"><h5 class="card-title">Creme Dental Pet</h5><p class="card-text">Higiene bucal.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+                <div class="card h-100"><img src="img/racao8.jpg" class="card-img-top" alt="Novidade 8"><div class="card-body"><h5 class="card-title">Comedouro Duplo</h5><p class="card-text">Ajustável.</p><a href="carrinho/carrinho.html" class="btn btn-custom">Comprar agora</a></div></div>
+            </div>
+            <button class="slider-nav next-btn" id="novidades-next" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </section>
+    <section class="container my-5">
+        <h2 class="mb-4 slider-title">Mais Vendidos</h2>
+        <div class="product-grid">
+            <div class="card h-100"><img src="img/racao3.webp" class="card-img-top" alt="GranPlus Choice Frango e Carne"><div class="card-body"><h5 class="card-title">GranPlus Choice 10 kg</h5><p class="card-text">Escolha perfeita.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 150,25</a></div></div>
+            <div class="card h-100"><img src="img/racao4.jpg" class="card-img-top" alt="Ração Seca Cães"><div class="card-body"><h5 class="card-title">Ração Seca 7 kg</h5><p class="card-text">Nutrição Premium.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 95,00</a></div></div>
+            <div class="card h-100"><img src="img/racao5.jpg" class="card-img-top" alt="Ração Gatos Filhotes"><div class="card-body"><h5 class="card-title">Ração Gatos 3 kg</h5><p class="card-text">Sabor Salmão.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 55,00</a></div></div>
+            <div class="card h-100"><img src="img/racao6.jpg" class="card-img-top" alt="Ração Golden"><div class="card-body"><h5 class="card-title">Golden Cães 15 kg</h5><p class="card-text">Alto rendimento.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 180,00</a></div></div>
+            <div class="card h-100"><img src="img/racao7.jpg" class="card-img-top" alt="Ração Frango"><div class="card-body"><h5 class="card-title">Ração Frango 5 kg</h5><p class="card-text">Sabor Frango.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 65,00</a></div></div>
+            <div class="card h-100"><img src="img/racao8.jpg" class="card-img-top" alt="Ração Salmão"><div class="card-body"><h5 class="card-title">Ração Salmão 2 kg</h5><p class="card-text">Ômega 3.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 45,00</a></div></div>
+            <div class="card h-100"><img src="img/racao1.webp" class="card-img-top" alt="Ração Úmida"><div class="card-body"><h5 class="card-title">Wet Food Ovelha</h5><p class="card-text">Para paladares exigentes.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 3,39</a></div></div>
+            <div class="card h-100"><img src="img/racao2.webp" class="card-img-top" alt="Ração Úmida"><div class="card-body"><h5 class="card-title">Wet Food Carne</h5><p class="card-text">Textura suave.</p><a href="carrinho/carrinho.html" class="btn btn-custom">R$ 3,39</a></div></div>
+        </div>
+    </section>
+    
+    <section class="container my-5">
+        <div class="promo-grid">
+            <div class="promo-card">
+                <img src="img/Chateau.ico" alt="Logo Chateau du Pet" class="promo-card-img">
+                <div class="promo-card-content">
+                    <h4>Compre online e <strong>Retire na loja</strong></h4>
+                    <p class="text-secondary">Em até <strong>45 minutos</strong></p>
+                    <div class="store-finder">
+                        <i class="bi bi-shop"></i>
+                        <div>
+                            <span>Encontre uma loja</span>
+                            <small>Perto de você</small>
+                        </div>
+                    </div>
+                    <a href="#" class="btn-promo">Ver nossas lojas</a>
+                </div>
+            </div>
+            <a href="#" class="promo-banner">
+                <img src="img/banner6.png" alt="Banner de entrega rápida">
+            </a>
+        </div>
+    </section>
+
+    <section class="container my-5">
+        <div class="product-slider-wrapper">
+            <h2 class="slider-title mb-4">Nossos Amigos Clientes</h2>
+            <button class="slider-nav prev-btn" id="animais-prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-track" id="animais-track">
+                <div class="card-media"><img src="img/animal1.webp" alt="Animal cliente 1"></div>
+                <div class="card-media"><img src="img/animal2.webp" alt="Animal cliente 2"></div>
+                <div class="card-media"><img src="img/animal3.webp" alt="Animal cliente 3"></div>
+                <div class="card-media"><img src="img/animal4.webp" alt="Animal cliente 4"></div>
+                <div class="card-media"><img src="img/animal5.webp" alt="Animal cliente 5"></div>
+                <div class="card-media"><img src="img/animal6.webp" alt="Animal cliente 6"></div>
+                <div class="card-media"><img src="img/animal7.webp" alt="Animal cliente 7"></div>
+                <div class="card-media"><img src="img/animal8.webp" alt="Animal cliente 8"></div>
+            </div>
+            <button class="slider-nav next-btn" id="animais-next" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <section class="container my-5">
+        <div class="product-slider-wrapper">
+            <h2 class="slider-title mb-4">Momentos Chateau du Pet</h2>
+            <button class="slider-nav prev-btn" id="videos-prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-track" id="videos-track">
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video1.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video2.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video1.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video2.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video1.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video2.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video1.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+                <div class="card-media video-card">
+                    <video muted loop preload="metadata">
+                        <source src="videos/video2.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                    </div>
+                </div>
+            </div>
+            <button class="slider-nav next-btn" id="videos-next" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <footer class="main-footer pt-5 pb-4">
+        <div class="container">
+            <div class="row footer-links mb-4">
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-cta p-4">
+                        <h4 class="text-white">Como podemos ajudar você?</h4>
+                        <p class="text-white-50">Conheça mais sobre nossa empresa e tenha o melhor atendimento.</p>
+                        <a href="contatos/contatos.html" class="btn btn-light btn-sm fw-bold">Fale Conosco</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Atendimento</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="contatos/contatos.html">Central de Ajuda/FAQ</a></li>
+                        <li><a href="#">Trocas e Devoluções</a></li>
+                        <li><a href="#">Política de Fretes</a></li>
+                        <li><a href="#">Trabalhe Conosco</a></li>
+                    </ul>
+                    <h5 class="mt-4">Onde estamos</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Nossos Serviços</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="veterinaria/veterinaria.html">Veterinária 🐾</a></li>
+                        <li><a href="servicos/servicos.html">Estética (Banho & Tosa)</a></li>
+                        <li><a href="hotel/hotel.html">Hotel Pet</a></li>
+                        <li><a href="day_care/day_care.html">Day Care</a></li>
+                        <li><a href="agendamento/agendamento.html">Agendamento</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Informações Legais</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Política de Cookies</a></li>
+                        <li><a href="#">Termos e Condições</a></li>
+                        <li><a href="lojas/lojas.html">Nossas Lojas</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="footer-hr">
+
+            <div class="text-center mt-3 small text-muted">
+                <p class="mb-0">CHATUAL DU PET | CNPJ: 10.864.846/0001-23</p>
+                <p class="mb-0">Compra segura. © Copyright 2025 CHATUAL DU PET - Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

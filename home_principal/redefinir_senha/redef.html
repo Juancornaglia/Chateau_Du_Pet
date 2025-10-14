@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redefinir Senha - Chateau du Pet</title>
+    
+    <link rel="shortcut icon" href="../home_principal/img/Chateau.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ribeye&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <link rel="stylesheet" href="redef.css">
+</head>
+<body>
+    <header>Chateau du Pet</header>
+
+    <div class="form-container">
+        <div class="form-box">
+
+            <div id="reset-section-1">
+                <div class="form-header">
+                    <a href="../login/login.html" class="back-button"><i class="bi bi-arrow-left"></i></a>
+                    <h1>Esqueceu a senha?</h1>
+                </div>
+                <p>Não se preocupe! Digite seu e-mail abaixo para receber o código de recuperação.</p>
+                <form id="sendCodeForm">
+                    <div class="input-group">
+                        <input type="email" id="email" placeholder="Digite seu e-mail" required>
+                    </div>
+                    <button type="submit" class="btn btn-solid">ENVIAR CÓDIGO</button>
+                </form>
+            </div>
+
+            <div id="reset-section-new">
+                <div class="form-header">
+                    <a href="#" id="back-to-step1" class="back-button"><i class="bi bi-arrow-left"></i></a>
+                    <h1>Redefinir senha</h1>
+                </div>
+                <p>Digite o código recebido e sua nova senha.</p>
+                <form id="resetPasswordForm">
+                    <div class="input-group">
+                        <input type="text" id="reset-code" placeholder="Código de 4 dígitos" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="new_password" placeholder="Nova senha" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="confirm_new_password" placeholder="Confirme a nova senha" required>
+                    </div>
+                    <button type="submit" class="btn btn-solid">SALVAR SENHA</button>
+                </form>
+            </div>
+
+        </div> 
+    </div>
+
+    <script src="redef.js"></script>
+</body>
+</html>
