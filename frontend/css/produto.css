@@ -1,0 +1,31 @@
+/* ==========================================================================
+   ARQUIVO CSS DO PRODUTO - Estilos exclusivos da página de produto
+   ========================================================================== */
+
+.product-title {
+    font-weight: 600;
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.quantity-selector {
+    max-width: 150px;
+}
+
+.quantity-selector .form-control {
+    background-color: #fff;
+}
+
+/* Estilos para o Accordion (Detalhes, Ficha Técnica) */
+.accordion-button:not(.collapsed) {
+    color: #fff;
+    background-color: var(--chateau-purple, #89006A);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(137, 0, 106, 0.25);
+}
