@@ -3,16 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Admin Chateau du Pet</title>
+    <title>Dashboard - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
-    <main class="container my-5">
-        <h1>Dashboard Principal</h1>
-        <p>Bem-vindo à área administrativa. Funcionalidade a ser implementada.</p>
-        <a href="/home.html">Voltar ao site público</a>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header"><h3>Chateau du Pet</h3></div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link active" href="dashboard.html"><i class="bi bi-grid-fill me-2"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="gestao_agendamentos.html"><i class="bi bi-calendar-check me-2"></i>Agendamentos</a></li>
+            <li class="nav-item"><a class="nav-link" href="gestao_produtos.html"><i class="bi bi-box-seam me-2"></i>Produtos</a></li>
+            <li class="nav-item"><a class="nav-link" href="gestao_horarios.html"><i class="bi bi-clock-history me-2"></i>Horários</a></li>
+            <li class="nav-item"><a class="nav-link" href="cms_editor.html"><i class="bi bi-pencil-square me-2"></i>Editor Visual</a></li>
+        </ul>
+        <a class="nav-link logout-link" href="../home.html"><i class="bi bi-box-arrow-left me-2"></i>Sair e ver o site</a>
+    </aside>
+
+    <main class="admin-main-content">
+        <h1>Dashboard</h1>
+        <p class="lead">Visão geral do seu negócio.</p>
+        <div class="row">
+            <div class="col-md-4"><div class="card p-3"><h5 class="card-title">Agendamentos Hoje</h5><p class="card-text fs-2 fw-bold">12</p></div></div>
+            <div class="col-md-4"><div class="card p-3"><h5 class="card-title">Novos Clientes (Mês)</h5><p class="card-text fs-2 fw-bold">34</p></div></div>
+            <div class="col-md-4"><div class="card p-3"><h5 class="card-title">Produtos em Baixo Estoque</h5><p class="card-text fs-2 fw-bold">8</p></div></div>
+        </div>
+        <h2 class="mt-5">Ações Rápidas</h2>
+        <a href="gestao_produtos.html" class="btn btn-primary">Adicionar Novo Produto</a>
+        <a href="gestao_horarios.html" class="btn btn-secondary">Gerenciar Horários</a>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
