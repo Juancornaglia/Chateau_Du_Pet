@@ -1,6 +1,7 @@
 // js/busca.js (Versão Final e Corrigida)
 
-import { supabase } from '/js/supabaseClient.js';
+// CAMINHO CORRIGIDO (./ significa "na mesma pasta")
+import { supabase } from './supabaseClient.js';
 
 // --- ELEMENTOS DO DOM (Apenas os que existem nesta página) ---
 const resultsContainer = document.getElementById('search-results-container');
@@ -67,14 +68,16 @@ function createProductCard(produto) {
     const favorites = getFavorites();
     const isFavorite = favorites.includes(parseInt(produto.id_produto, 10));
     const heartIconClass = isFavorite ? 'bi-heart-fill' : 'bi-heart';
-    const productLink = `/produto.html?id=${produto.id_produto}`;
+    
+    // CAMINHO CORRIGIDO (relativo à pasta 'frontend/')
+    const productLink = `produto.html?id=${produto.id_produto}`;
     
     let imageUrl = produto.url_imagem;
-    // CORREÇÃO: As imagens do seu banco de dados já são URLs completas (https://...),
-    // então não precisamos adicionar "/img/"
-    if (!imageUrl || imageUrl.trim() === "") { 
-        imageUrl = '/img/placeholder.png'; // Imagem padrão
+    // CAMINHO CORRIGIDO (relativo à pasta 'frontend/')
+    if (imageUrl && !imageUrl.startsWith('http')) {
+        imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`; 
     }
+    if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'img/placeholder.png'; }
     
     return `
         <div class="card h-100 product-card shadow-sm position-relative">
@@ -109,13 +112,11 @@ function createProductCard(produto) {
 
 async function populateFilters() {
     try {
-        // Busca todas as opções de filtro únicas do seu banco
         const { data: produtos, error } = await supabase
             .from('produtos')
             .select('tipo_produto, marca, tamanho_medida');
 
         if (error) {
-            // VERIFIQUE AS PERMISSÕES RLS (LEITURA) DA TABELA 'produtos' NO SUPABASE
             console.error("Erro ao buscar filtros (Verifique RLS):", error);
             throw error;
         }
@@ -124,7 +125,6 @@ async function populateFilters() {
         const marcas = [...new Set(produtos.map(p => p.marca).filter(Boolean))].sort();
         const tamanhos = [...new Set(produtos.map(p => p.tamanho_medida).filter(Boolean))].sort();
         
-        // Preenche os filtros no HTML
         if(categoryFiltersContainer) categoryFiltersContainer.innerHTML = categorias.map(c => `
             <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" value="${c}" id="cat-${c}" data-column="tipo_produto">
             <label class="form-check-label" for="cat-${c}">${c}</label></div>
@@ -175,7 +175,6 @@ async function performSearch() {
     let query = supabase.from('produtos').select('*');
     
     if (searchTerm) {
-        // Busca no nome, descrição, marca ou tipo
         query = query.or(`nome_produto.ilike.%${searchTerm}%,descricao.ilike.%${searchTerm}%,marca.ilike.%${searchTerm}%,tipo_produto.ilike.%${searchTerm}%`);
     }
     

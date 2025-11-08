@@ -1,12 +1,29 @@
 // js/produto.js
 
-import { supabase } from '/js/supabaseClient.js';
-// Precisamos das funções de favoritos para o botão de coração
-import { getFavorites, toggleFavorite, updateFavoriteButtons } from '/js/home.js';
+// CAMINHO CORRIGIDO
+import { supabase } from './supabaseClient.js';
+// Importa as funções de favoritos para o botão de coração
+import { getFavorites, toggleFavorite } from './home.js';
 
 function formatPrice(price) { 
     if (typeof price !== 'number') return 'Preço a consultar'; 
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); 
+}
+
+// (Função copiada do home.js para funcionar aqui)
+function updateFavoriteButtons() { 
+    const favorites = getFavorites();
+    document.querySelectorAll('.btn-favorite').forEach(button => {
+        const productId = parseInt(button.dataset.productId, 10);
+        if (!isNaN(productId)) {
+            button.classList.toggle('active', favorites.includes(productId));
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('bi-heart', !favorites.includes(productId));
+                icon.classList.toggle('bi-heart-fill', favorites.includes(productId));
+            }
+        }
+    });
 }
 
 async function loadProductDetails() {
@@ -46,7 +63,7 @@ async function loadProductDetails() {
     // 2. Monta o HTML (Sem "Quantidade" e "Adicionar ao Carrinho")
     container.innerHTML = `
         <div class="col-md-6 text-center">
-            <img src="${produto.url_imagem}" class="img-fluid rounded shadow-sm" alt="${produto.nome_produto}" style="max-height: 450px; object-fit: contain; padding: 1rem; background: #fff;">
+            <img src="${produto.url_imagem.startsWith('http') ? produto.url_imagem : 'img/' + (produto.url_imagem || 'placeholder.png')}" class="img-fluid rounded shadow-sm" alt="${produto.nome_produto}" style="max-height: 450px; object-fit: contain; padding: 1rem; background: #fff;">
         </div>
         <div class="col-md-6">
             <button class="btn btn-outline-danger btn-favorite position-absolute top-0 end-0 m-3 ${isFavorite ? 'active' : ''}" data-product-id="${produto.id_produto}" style="z-index: 10;">
@@ -80,7 +97,10 @@ async function loadProductDetails() {
     document.querySelector('.btn-favorite').addEventListener('click', (event) => {
         const favoriteButton = event.currentTarget;
         const productId = favoriteButton.dataset.productId;
-        if (productId) { toggleFavorite(productId); }
+        if (productId) { 
+            toggleFavorite(productId); 
+            updateFavoriteButtons(); // Atualiza o ícone
+        }
     });
 }
 
@@ -92,9 +112,8 @@ async function loadStoreAvailability(productId) {
     if (!storeListEl) return;
 
     try {
-        // Busca na tabela 'produtos' por esse ID e traz a informação da loja
-        // ATENÇÃO: Seu schema 'produtos' não tem 'id_loja'. 
-        // Vou assumir que TODOS os produtos estão em TODAS as lojas.
+        // ASSUMINDO QUE TODOS OS PRODUTOS ESTÃO EM TODAS AS LOJAS
+        // (porque sua tabela 'produtos' não tem 'id_loja')
         
         const { data: lojas, error } = await supabase.from('lojas').select('nome_loja');
 
@@ -114,12 +133,10 @@ async function loadStoreAvailability(productId) {
     }
 }
 
-
 async function loadRelatedProducts(tipo_produto, currentProductId) {
     const container = document.getElementById('related-products-container');
     if (!tipo_produto) { if(container) container.style.display = 'none'; return; }
     
-    // Busca produtos do mesmo tipo, que não sejam o produto atual
     const { data: related, error } = await supabase
         .from('produtos')
         .select('*')
@@ -134,20 +151,25 @@ async function loadRelatedProducts(tipo_produto, currentProductId) {
     
     container.innerHTML = '';
     related.forEach(produto => {
-        // Reutiliza a função createProductCard, mas como ela não está aqui,
-        // vamos usar um HTML simplificado.
         const isPromo = produto.preco_promocional && produto.preco_promocional < produto.preco;
         const displayPrice = isPromo ? formatPrice(produto.preco_promocional) : formatPrice(produto.preco);
+        // CAMINHO CORRIGIDO (relativo)
+        const productLink = `produto.html?id=${produto.id_produto}`;
+        let imageUrl = produto.url_imagem;
+        if (imageUrl && !imageUrl.startsWith('http')) {
+            imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`;
+        }
+        if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'img/placeholder.png'; }
 
         container.innerHTML += `
             <div class="col">
                 <div class="card h-100 product-card shadow-sm">
-                    <a href="/produto.html?id=${produto.id_produto}">
-                        <img src="${produto.url_imagem}" class="card-img-top" alt="${produto.nome_produto}">
+                    <a href="${productLink}">
+                        <img src="${imageUrl}" class="card-img-top" alt="${produto.nome_produto}">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title fs-6">
-                            <a href="/produto.html?id=${produto.id_produto}" class="stretched-link text-decoration-none text-dark">${produto.nome_produto}</a>
+                            <a href="${productLink}" class="stretched-link text-decoration-none text-dark">${produto.nome_produto}</a>
                         </h5>
                         <p class="card-text price">${displayPrice}</p>
                     </div>
