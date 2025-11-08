@@ -1,8 +1,8 @@
 /* Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root { 
-    --chateau-purple: #89006A; 
-    --chateau-light-purple: #f0e6f0; 
+:root {
+    --chateau-purple: #89006A;
+    --chateau-light-purple: #f0e6f0;
 }
 body { background-color: #fff; color: #333; font-family: Arial, sans-serif; }
 button, input, textarea, select { font-family: inherit; }
@@ -42,38 +42,38 @@ button, input, textarea, select { font-family: inherit; }
 .btn-custom { background-color: var(--chateau-purple); color: #fff; border-radius: 20px; padding: 8px 20px; border: 1px solid var(--chateau-purple); transition: 0.3s; display: inline-block; text-decoration: none; text-align: center; }
 .btn-custom:hover { background-color: #6e0054; border-color: #6e0054; color: #fff; }
 
-.card { 
-    border: 1px solid var(--chateau-purple); 
-    transition: box-shadow 0.3s; 
+.card {
+    border: 1px solid var(--chateau-purple);
+    transition: box-shadow 0.3s;
     padding: 1rem;
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    border-radius: 8px; 
-    background-color: #fff; 
-    color: #333; 
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
 }
 .card:hover { box-shadow: 0 4px 8px rgba(137,0,106,0.15); }
-.card-img-top { 
-    max-height: 150px; 
-    object-fit: contain; 
+.card-img-top {
+    max-height: 150px;
+    object-fit: contain;
     margin: 0 auto 1rem auto;
     width: auto;
 }
 
-.card-body { 
-    padding: 0; 
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    text-align: center; 
+.card-body {
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
-.card-title { 
-    font-size: 1.1rem; 
-    font-weight: 600; 
-    margin-bottom: 0.5rem; 
-    color: #333; 
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
     min-height: 2.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -104,27 +104,40 @@ button, input, textarea, select { font-family: inherit; }
 .slider-track { display: flex; overflow-x: auto; gap: 1.5rem; padding-bottom: 1rem; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
 .slider-track::-webkit-scrollbar { display: none; }
 
-/* ====================================================================
- * CORREÇÃO: A classe '.product-grid' foi removida.
- * Todas as seções de produto agora usam '.slider-track'
- * ====================================================================
- */
-
-/* Estilos para os botões de navegação do slider (antes ausentes) */
+/* Estilos para os botões de navegação do slider */
 .slider-nav { position: absolute; top: 50%; transform: translateY(-50%); background-color: #fff; border: 1px solid #ddd; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--chateau-purple); }
 .slider-nav.prev-btn { left: -15px; }
 .slider-nav.next-btn { right: -15px; }
 
-.product-slider-wrapper h2, .container > h2 { padding-left: 30px; }
-@media (max-width: 767px) { 
-    .product-slider-wrapper h2, .container > h2 { padding-left: 15px; } 
-    .slider-nav { display: none; } 
+
+/* ===== MODIFICAÇÃO PARA O "VER MAIS" INICIA AQUI ===== */
+
+.product-slider-wrapper > .mb-4 {
+    padding-left: 30px;
+    padding-right: 30px; /* Para o link "Ver mais" */
 }
-.slider-track .card { flex: 0 0 280px; } /* Define a largura dos cards nos sliders */
+.container > h2 { padding-left: 30px; }
+
+@media (max-width: 767px) {
+    .product-slider-wrapper > .mb-4 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .container > h2 { padding-left: 15px; }
+    .slider-nav { display: none; }
+}
+.product-slider-wrapper > .mb-4 a {
+    font-size: 0.9rem;
+    text-wrap: nowrap; /* Evita que "Ver mais" quebre a linha */
+}
+/* ===== MODIFICAÇÃO TERMINA AQUI ===== */
+
+
+.slider-track .card { flex: 0 0 280px; } 
 .banner-promo-full { width: 100%; height: auto; object-fit: cover; }
 
 /* ==========================================================================
-   4. SIDEBAR E FOOTERRRRRRRRRRRRRRR
+   4. SIDEBAR E FOOTER
    ========================================================================== */
 .sidebar { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: var(--chateau-purple); color: #fff; z-index: 1050; transition: left 0.3s ease; padding: 1rem; overflow-y: auto; }
 .sidebar.active { left: 0; }
@@ -162,3 +175,14 @@ button, input, textarea, select { font-family: inherit; }
 .video-card .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.3); display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
 .video-card video.is-playing + .video-overlay { opacity: 0; }
 .play-button { background: none; border: none; cursor: pointer; color: white; font-size: 4rem; padding: 0; }
+
+/* =================================================================== */
+/* NOVO: Estilo para o Seletor de Loja
+/* =================================================================== */
+.location-bar {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.location-bar:hover {
+    background-color: #6a0052; /* Um roxo um pouco mais escuro */
+}

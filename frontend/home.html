@@ -36,31 +36,31 @@
                 </ul>
             </div>
             
-            <div class="w-100 d-flex align-items-center location-bar py-1">
+            <div class="w-100 d-flex align-items-center location-bar py-1" id="store-selector-trigger" data-bs-toggle="modal" data-bs-target="#storeModal">
                  <img src="img/logo_pequena.png" alt="Logo Chatual Du Pet" class="localizacao-logo me-2">
-                 <span id="unidade-proxima" class="text-white small">Buscando unidade mais próxima...</span>
-                 <button id="change-store-btn" class="btn btn-sm btn-link text-white small ms-auto" style="text-decoration: underline; display: none;">Trocar Loja</button>
+                 <span id="unidade-proxima" class="text-white small">Loja: Tatuapé (Principal)</span>
+                 <span id="change-store-btn" class="btn btn-sm btn-link text-white small ms-auto" style="text-decoration: underline;">Trocar Loja</span>
             </div>
         </div>
     </nav>
 
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <img src="img/vector.png" alt="Perfil" class="sidebar-logo rounded-circle bg-light p-1">
-            <div>
-                <p class="fw-bold mb-0">Bem-vindo!</p>
-                <a href="usuario/login.html">Entre ou Cadastre-se</a>
-            </div>
-            <button id="close-sidebar" class="btn-close btn-close-white"></button>
+    <div class="sidebar-header">
+        <img src="img/logo_pequena.png" alt="Perfil" class="sidebar-logo rounded-circle bg-light p-1">
+        <div>
+            <p class="fw-bold mb-0">Bem-vindo!</p>
+            <a href="usuario/login.html">Entre ou Cadastre-se</a>
         </div>
+        <button id="close-sidebar" class="btn-close btn-close-white"></button>
+    </div>
         <ul class="sidebar-menu">
             <li class="menu-item"><button class="submenu-toggle"><i class="bi bi-tag-fill me-2"></i>Categorias</button>
                 <ul class="submenu">
-                     <li><a href="busca.html?q=racao">Rações</a></li>
-                     <li><a href="busca.html?q=petisco">Petiscos</a></li>
-                     <li><a href="busca.html?q=brinquedo">Brinquedos</a></li>
-                     <li><a href="busca.html?q=higiene">Higiene</a></li>
-                     <li><a href="busca.html?q=acessorio">Acessórios</a></li>
+                    <li><a href="busca.html?q=racao">Rações</a></li>
+                    <li><a href="busca.html?q=petisco">Petiscos</a></li>
+                    <li><a href="busca.html?q=brinquedo">Brinquedos</a></li>
+                    <li><a href="busca.html?q=higiene">Higiene</a></li>
+                    <li><a href="busca.html?q=acessorio">Acessórios</a></li>
                 </ul>
             </li>
             <li class="menu-item"><button class="submenu-toggle">🐶 Cachorros</button>
@@ -123,7 +123,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="mb-4 slider-title">🔥 Super ofertas do dia:</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">🔥 Super ofertas do dia:</h2>
+                    <a href="busca.html?q=oferta" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="ofertas-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="ofertas-track">
                     <div class="spinner-border text-primary mx-auto" role="status"><span class="visually-hidden">Loading...</span></div>
@@ -136,7 +139,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="slider-title mb-4">✨ Recomendados para você</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">✨ Recomendados para você</h2>
+                    <a href="busca.html" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="recomendados-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="recomendados-track">
                     <div class="spinner-border text-primary mx-auto" role="status"><span class="visually-hidden">Loading...</span></div>
@@ -147,7 +153,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="slider-title mb-4">🚀 Novidades para seu Pet</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">🚀 Novidades para seu Pet</h2>
+                    <a href="busca.html?q=novidade" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="novidades-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="novidades-track">
                     <div class="spinner-border text-primary mx-auto" role="status"><span class="visually-hidden">Loading...</span></div>
@@ -158,7 +167,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="mb-4 slider-title">🏆 Mais Vendidos</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">🏆 Mais Vendidos</h2>
+                    <a href="busca.html?q=vendidos" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="mais-vendidos-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="mais-vendidos-track">
                     <div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
@@ -184,7 +196,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="slider-title mb-4">🐶 Nossos Amigos Clientes 🐱</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">🐶 Nossos Amigos Clientes 🐱</h2>
+                    <a href="paginas_institucionais/avaliacoes.html" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="amigos-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="animais-track">
                     <div class="card-media"><img src="img/animal1.webp" alt="Animal cliente 1"></div>
@@ -202,7 +217,10 @@
 
         <section class="container my-5">
             <div class="product-slider-wrapper">
-                <h2 class="slider-title mb-4">🎬 Momentos Chateau du Pet</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="slider-title mb-0">🎬 Momentos Chateau du Pet</h2>
+                    <a href="paginas_institucionais/avaliacoes.html" class="btn btn-sm btn-link text-decoration-none fw-bold main-purple-text">Ver mais <i class="bi bi-chevron-right small"></i></a>
+                </div>
                 <button class="slider-nav prev-btn" id="videos-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="videos-track">
                     <div class="card-media video-card"><video muted loop preload="metadata"><source src="videos/video1.mp4" type="video/mp4"></video><div class="video-overlay"><button class="play-button"><i class="bi bi-play-circle-fill"></i></button></div></div>
@@ -262,6 +280,35 @@
         </div>
     </footer>
 
+    
+    <div class="modal fade" id="storeModal" tabindex="-1" aria-labelledby="storeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="storeModalLabel">Escolha sua unidade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Os produtos e estoques podem variar de acordo com a loja selecionada.</p>
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action store-select-btn" data-store-id="1" data-store-name="Tatuapé (Principal)">
+                            <strong>Tatuapé (Principal)</strong>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action store-select-btn" data-store-id="2" data-store-name="Mooca">
+                            <strong>Mooca</strong>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action store-select-btn" data-store-id="3" data-store-name="Ipiranga">
+                            <strong>Ipiranga</strong>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action store-select-btn" data-store-id="4" data-store-name="Santos">
+                            <strong>Santos</strong>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabaseClient.js" type="module"></script>

@@ -1,48 +1,34 @@
 // js/admin_agendamentos.js
 
-import { supabase } from '../js/supabaseClient.js'; // Importa a conexão
+import { supabase } from '../js/supabaseClient.js';
+// Importa o "segurança"
+import { checkAdminAuth } from './admin_auth.js'; 
 
 // --- FUNÇÕES AUXILIARES ---
-
-// Formata Data e Hora (Ex: 26/10/2025 14:30)
+// (O código formatDateTime e getStatusBadge continua o mesmo)
 function formatDateTime(dateTimeString) {
     if (!dateTimeString) return 'N/A';
     try {
         const date = new Date(dateTimeString);
-        // Ajusta para o fuso horário local se necessário, mas Supabase TZ geralmente já vem correto
         return date.toLocaleString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
-    } catch (e) {
-        console.error("Erro ao formatar data/hora:", e);
-        return 'Data inválida';
-    }
+    } catch (e) { return 'Data inválida'; }
 }
 
-// Retorna um Badge Bootstrap baseado no status
 function getStatusBadge(status) {
     status = status ? status.toLowerCase() : 'desconhecido';
     switch (status) {
-        case 'confirmado':
-            return '<span class="badge bg-success">Confirmado</span>';
-        case 'pendente':
-            return '<span class="badge bg-warning text-dark">Pendente</span>';
-        case 'cancelado':
-            return '<span class="badge bg-danger">Cancelado</span>';
-        case 'finalizado':
-            return '<span class="badge bg-secondary">Finalizado</span>';
-        default:
-            return `<span class="badge bg-light text-dark">${status}</span>`;
+        case 'confirmado': return '<span class="badge bg-success">Confirmado</span>';
+        case 'pendente': return '<span class="badge bg-warning text-dark">Pendente</span>';
+        case 'cancelado': return '<span class="badge bg-danger">Cancelado</span>';
+        case 'finalizado': return '<span class="badge bg-secondary">Finalizado</span>';
+        default: return `<span class="badge bg-light text-dark">${status}</span>`;
     }
 }
 
 // --- LÓGICA PRINCIPAL ---
-
-// Função assíncrona para buscar agendamentos e preencher a tabela
 async function loadAndDisplayAppointments() {
     const tableBody = document.getElementById('appointments-table-body');
     const loadingRow = document.getElementById('loading-row-appointments');
@@ -56,39 +42,29 @@ async function loadAndDisplayAppointments() {
 
     loadingRow.style.display = 'table-row';
     noAppointmentsRow.style.display = 'none';
-    tableBody.innerHTML = ''; // Limpa antes de carregar
+    
+    // Limpa apenas as linhas de dados, mantendo a linha de loading
+    const existingRows = tableBody.querySelectorAll("tr:not(#loading-row-appointments):not(#no-appointments-row)");
+    existingRows.forEach(row => row.remove());
 
     try {
-        // Consulta ao Supabase: busca na tabela 'agendamentos'
-        // Inclui JOINs (usando a sintaxe do Supabase) para buscar nomes de tabelas relacionadas
         let { data: agendamentos, error } = await supabase
             .from('agendamentos')
             .select(`
-                id_agendamento,
-                data_hora_inicio,
-                status,
-                observacoes_cliente,
+                id_agendamento, data_hora_inicio, status, observacoes_cliente,
                 perfis ( nome_completo ),
                 pets ( nome_pet ),
                 servicos ( nome_servico ),
                 lojas ( nome_loja )
             `)
-            .order('data_hora_inicio', { ascending: false }); // Mais recentes primeiro
+            .order('data_hora_inicio', { ascending: false }); 
 
-        if (error) {
-            console.error('Erro na consulta de agendamentos:', error);
-            // Tratamento específico para erro de relação (se tabelas relacionadas não existirem ou nomes errados)
-            if (error.message.includes("relation") && error.message.includes("does not exist")) {
-                 throw new Error(`Falha ao buscar agendamentos: Uma das tabelas relacionadas (perfis, pets, servicos, lojas) parece não existir ou está com nome incorreto no banco. Verifique a estrutura. Detalhe: ${error.message}`);
-            }
-             throw new Error(`Falha ao buscar agendamentos: ${error.message}`);
-        }
+        if (error) { throw error; }
 
         loadingRow.style.display = 'none';
 
         if (agendamentos && agendamentos.length > 0) {
             agendamentos.forEach(ag => {
-                // Extrai os nomes das tabelas relacionadas (com tratamento para caso não venham)
                 const nomeCliente = ag.perfis?.nome_completo || 'Cliente não encontrado';
                 const nomePet = ag.pets?.nome_pet || 'Pet não encontrado';
                 const nomeServico = ag.servicos?.nome_servico || 'Serviço não encontrado';
@@ -115,7 +91,7 @@ async function loadAndDisplayAppointments() {
                         </td>
                     </tr>
                 `;
-                tableBody.innerHTML += rowHtml;
+                tableBody.insertAdjacentHTML('beforeend', rowHtml); // Usa insertAdjacentHTML para adicionar
             });
         } else {
             noAppointmentsRow.style.display = 'table-row';
@@ -129,17 +105,14 @@ async function loadAndDisplayAppointments() {
     }
 }
 
+
 // --- FUNÇÕES PARA AÇÕES (Ver, Alterar Status, Cancelar) ---
-// (Serão implementadas com Modais e lógica Supabase futuramente)
-
 async function showAppointmentDetails(appointmentId) {
-    console.log(`Buscando detalhes do agendamento ID: ${appointmentId}`);
-     // Aqui você buscaria todos os detalhes do agendamento, cliente, pet, etc.
-     // e preencheria um Modal de detalhes.
-    alert(`FUNCIONALIDADE FUTURA: Mostrar detalhes completos do agendamento ID ${appointmentId} em um modal.`);
+    const modalBody = document.getElementById('appointmentDetailModalBody');
+    if(!modalBody) return;
+    
+    modalBody.innerHTML = `<p class="text-center"><span class="spinner-border spinner-border-sm"></span> Carregando detalhes...</p>`;
 
-    // Exemplo de como buscar dados completos:
-    /*
     try {
         let { data: ag, error } = await supabase
             .from('agendamentos')
@@ -147,28 +120,23 @@ async function showAppointmentDetails(appointmentId) {
             .eq('id_agendamento', appointmentId)
             .single();
         if (error) throw error;
+        
         if (ag) {
-             // Preencher o Modal #appointmentDetailModal com os dados de 'ag'
-             const modalBody = document.getElementById('appointmentDetailModalBody');
-             if(modalBody){
-                 modalBody.innerHTML = `
-                     <p><strong>Cliente:</strong> ${ag.perfis?.nome_completo || 'N/A'} (Tel: ${ag.perfis?.telefone || 'N/A'})</p>
-                     <p><strong>Pet:</strong> ${ag.pets?.nome_pet || 'N/A'} (Espécie: ${ag.pets?.especie || 'N/A'}, Raça: ${ag.pets?.raca || 'N/A'})</p>
-                     <p><strong>Serviço:</strong> ${ag.servicos?.nome_servico || 'N/A'}</p>
-                     <p><strong>Loja:</strong> ${ag.lojas?.nome_loja || 'N/A'}</p>
-                     <p><strong>Data/Hora:</strong> ${formatDateTime(ag.data_hora_inicio)}</p>
-                     <p><strong>Status Atual:</strong> ${getStatusBadge(ag.status)}</p>
-                     <p><strong>Observações Cliente:</strong> ${ag.observacoes_cliente || 'Nenhuma'}</p>
-                 `;
-                  // new bootstrap.Modal(document.getElementById('appointmentDetailModal')).show(); // Abre o modal via JS se não abrir via data-bs-toggle
-             }
+             modalBody.innerHTML = `
+                 <p><strong>Cliente:</strong> ${ag.perfis?.nome_completo || 'N/A'} (Tel: ${ag.perfis?.telefone || 'N/A'})</p>
+                 <p><strong>Pet:</strong> ${ag.pets?.nome_pet || 'N/A'} (Espécie: ${ag.pets?.especie || 'N/A'}, Raça: ${ag.pets?.raca || 'N/A'})</p>
+                 <p><strong>Serviço:</strong> ${ag.servicos?.nome_servico || 'N/A'}</p>
+                 <p><strong>Loja:</strong> ${ag.lojas?.nome_loja || 'N/A'}</p>
+                 <p><strong>Data/Hora:</strong> ${formatDateTime(ag.data_hora_inicio)}</p>
+                 <p><strong>Status Atual:</strong> ${getStatusBadge(ag.status)}</p>
+                 <p><strong>Observações Cliente:</strong> ${ag.observacoes_cliente || 'Nenhuma'}</p>
+             `;
         } else {
-             alert('Agendamento não encontrado.');
+             modalBody.innerHTML = `<p class="text-danger">Agendamento não encontrado.</p>`;
         }
     } catch (error) {
-        alert('Erro ao buscar detalhes: ' + error.message);
+         modalBody.innerHTML = `<p class="text-danger">Erro ao buscar detalhes: ${error.message}</p>`;
     }
-    */
 }
 
 async function changeAppointmentStatus(appointmentId) {
@@ -181,32 +149,29 @@ async function changeAppointmentStatus(appointmentId) {
                 .from('agendamentos')
                 .update({ status: newStatus.toLowerCase() })
                 .eq('id_agendamento', appointmentId)
-                .select(); // Retorna o registro atualizado
+                .select(); 
 
             if (error) throw error;
 
             alert('Status atualizado com sucesso!');
-            // Atualiza o badge na linha da tabela visualmente
             const row = document.getElementById(`appointment-row-${appointmentId}`);
             if (row) {
-                const statusCell = row.querySelector('td:nth-child(6)'); // Sexta coluna é o Status
+                const statusCell = row.querySelector('td:nth-child(6)'); 
                 if (statusCell) {
                     statusCell.innerHTML = getStatusBadge(newStatus);
                 }
-                // Desabilitar botão Cancelar se necessário
                 const cancelButton = row.querySelector('.btn-cancel');
                  if(cancelButton){
-                    cancelButton.disabled = (newStatus.toLowerCase() === 'cancelado' || newStatus.toLowerCase() === 'finalizado');
+                     cancelButton.disabled = (newStatus.toLowerCase() === 'cancelado' || newStatus.toLowerCase() === 'finalizado');
                  }
             } else {
-                loadAndDisplayAppointments(); // Recarrega tudo se não achar a linha
+                loadAndDisplayAppointments(); 
             }
-
         } catch (error) {
             console.error('Erro ao atualizar status:', error.message);
             alert(`Erro ao atualizar status: ${error.message}`);
         }
-    } else if (newStatus !== null) { // Só mostra erro se o usuário digitou algo inválido (não se ele cancelou o prompt)
+    } else if (newStatus !== null) { 
         alert('Status inválido. Use: confirmado, finalizado, cancelado ou pendente.');
     }
 }
@@ -214,15 +179,13 @@ async function changeAppointmentStatus(appointmentId) {
 async function cancelAppointment(appointmentId) {
     console.log(`Cancelar agendamento ID: ${appointmentId}`);
     if (confirm(`Tem certeza que deseja CANCELAR o agendamento ID ${appointmentId}?`)) {
-        await changeAppointmentStatus(appointmentId, 'cancelado'); // Reutiliza a função de mudar status
-         // O botão já será desabilitado pela função changeAppointmentStatus
+        // Corrigido: Para cancelar, o status deve ser 'cancelado'
+        await changeAppointmentStatus(appointmentId, 'cancelado'); 
     }
 }
 
 
 // --- EVENT LISTENERS ---
-
-// Delegação de eventos para os botões na tabela
 document.addEventListener('click', (event) => {
     const target = event.target;
     const viewButton = target.closest('.btn-view');
@@ -248,8 +211,14 @@ document.addEventListener('click', (event) => {
     }
 });
 
+
 // --- INICIALIZAÇÃO ---
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM carregado. Iniciando carregamento de agendamentos...");
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. ADICIONA O "SEGURANÇA"
+    const adminUser = await checkAdminAuth();
+    if (!adminUser) return; // Para a execução se não for admin
+
+    // 2. SÓ CARREGA OS DADOS SE FOR ADMIN
+    console.log("Admin verificado. Carregando agendamentos...");
     loadAndDisplayAppointments();
 });

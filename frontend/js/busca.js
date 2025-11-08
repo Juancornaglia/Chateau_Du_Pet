@@ -69,11 +69,10 @@ function createProductCard(produto) {
     const isFavorite = favorites.includes(parseInt(produto.id_produto, 10));
     const heartIconClass = isFavorite ? 'bi-heart-fill' : 'bi-heart';
     
-    // CAMINHO CORRIGIDO (relativo à pasta 'frontend/')
+    // Caminho relativo ao root (onde busca.html está)
     const productLink = `produto.html?id=${produto.id_produto}`;
     
     let imageUrl = produto.url_imagem;
-    // CAMINHO CORRIGIDO (relativo à pasta 'frontend/')
     if (imageUrl && !imageUrl.startsWith('http')) {
         imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`; 
     }
@@ -174,9 +173,27 @@ async function performSearch() {
     
     let query = supabase.from('produtos').select('*');
     
+    // =================================================================
+    // CORREÇÃO DA BUSCA (IGNORAR ACENTOS)
+    // =================================================================
     if (searchTerm) {
-        query = query.or(`nome_produto.ilike.%${searchTerm}%,descricao.ilike.%${searchTerm}%,marca.ilike.%${searchTerm}%,tipo_produto.ilike.%${searchTerm}%`);
+        // 1. Prepara o termo de busca: 'racao barata' vira "racao:*" E "barata:*"
+        // Isso ignora acentos E faz busca por prefixo (ex: "rac" acha "ração")
+        const formattedSearchTerm = searchTerm.trim().split(/\s+/)
+            .filter(Boolean)
+            .map(t => `${t}:*`)
+            .join(' & ');
+
+        // 2. Substitui o .ilike() por .or() com .textSearch() (ou .fts())
+        // O 'portuguese' é o que faz a mágica de ignorar acentos.
+        query = query.or(
+            `nome_produto.fts(portuguese).${formattedSearchTerm},` +
+            `descricao.fts(portuguese).${formattedSearchTerm},` +
+            `marca.fts(portuguese).${formattedSearchTerm},` +
+            `tipo_produto.fts(portuguese).${formattedSearchTerm}`
+        );
     }
+    // =================================================================
     
     if (currentActiveFilters.tipo_produto.length > 0) {
         query = query.in('tipo_produto', currentActiveFilters.tipo_produto);

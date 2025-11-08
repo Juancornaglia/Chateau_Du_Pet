@@ -1,10 +1,8 @@
 // js/home.js
 // ====================================================================
-// CORREÇÃO: A lógica do 'homeSupabase.js' foi movida para este arquivo.
-// APAGUE o arquivo 'homeSupabase.js' e a tag <script> dele no HTML.
+// ARQUIVO MODIFICADO PARA USAR IDs NUMÉRICOS (1, 2, 3, 4)
 // ====================================================================
 
-// CAMINHOS CORRIGIDOS (./ significa "na mesma pasta")
 import { supabase } from './supabaseClient.js'; 
 import { CHATEAU_SELECTED_STORE_KEY } from './geolocator.js'; 
 
@@ -59,15 +57,14 @@ export function createProductCard(produto) {
     const favorites = getFavorites();
     const isFavorite = favorites.includes(parseInt(produto.id_produto, 10));
     const heartIconClass = isFavorite ? 'bi-heart-fill' : 'bi-heart';
-    // CAMINHO CORRIGIDO (adicionado 'frontend/')
-    const productLink = `frontend/produto.html?id=${produto.id_produto}`;
+    
+    const productLink = `produto.html?id=${produto.id_produto}`; 
     
     let imageUrl = produto.url_imagem;
-    // CAMINHO CORRIGIDO (adicionado 'frontend/')
     if (imageUrl && !imageUrl.startsWith('http')) {
-        imageUrl = `frontend/img/${produto.url_imagem || 'placeholder.png'}`; 
+        imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`; 
     }
-    if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'frontend/img/placeholder.png'; }
+    if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'img/placeholder.png'; }
     
     return `
         <div class="card h-100 product-card shadow-sm position-relative">
@@ -101,12 +98,30 @@ export function createProductCard(produto) {
 // 4. LÓGICA DE GEOLOCALIZAÇÃO E CARREGAMENTO
 // ==========================================================================
 
+/**
+ * MODIFICAÇÃO: Pega o ID da loja salva.
+ * O padrão agora é '1' (Tatuapé).
+ */
 function getSelectedStoreId() {
     const savedStore = localStorage.getItem(CHATEAU_SELECTED_STORE_KEY);
     if (savedStore) {
-        return JSON.parse(savedStore).id;
+        // Garante que o ID salvo seja um número
+        return parseInt(JSON.parse(savedStore).id, 10);
     }
-    return 1; // ID Padrão (Pet Shop Central) se não houver nada salvo
+    // ID Padrão (1 = Tatuapé) se não houver nada salvo
+    return 1; 
+}
+
+/**
+ * MODIFICAÇÃO: Pega o NOME da loja salva.
+ * O padrão agora é 'Tatuapé (Principal)'.
+ */
+function getSelectedStoreName() {
+    const savedStore = localStorage.getItem(CHATEAU_SELECTED_STORE_KEY);
+    if (savedStore) {
+        return JSON.parse(savedStore).name;
+    }
+    return 'Tatuapé (Principal)';
 }
 
 async function loadProducts(containerId, initialQueryFn, isGrid = false) {
@@ -119,6 +134,7 @@ async function loadProducts(containerId, initialQueryFn, isGrid = false) {
     }
 
     const storeId = getSelectedStoreId(); 
+    
     container.innerHTML = isGrid 
         ? '<div class="col-12 text-center py-4"><div class="spinner-border text-primary" role="status"></div></div>'
         : '<div class="spinner-border text-primary mx-auto" role="status"></div>';
@@ -130,20 +146,17 @@ async function loadProducts(containerId, initialQueryFn, isGrid = false) {
         
         if (error) { 
              console.error(`ERRO SUPABASE em ${containerId}:`, error);
-             throw new Error(`Falha ao buscar dados: ${error.message}. (Verifique RLS e Colunas)`); 
+             throw new Error(`Falha ao buscar dados: ${error.message}.`); 
         }
 
         if (produtos && produtos.length > 0) {
              container.innerHTML = produtos.map(produto => {
                  const cardHtml = createProductCard(produto);
-                 // ====================================================================
-                 // CORREÇÃO: Se NÃO for grid (ou seja, é um slider), não envolve em 'col'
-                 // ====================================================================
                  return isGrid ? `<div class="col">${cardHtml}</div>` : cardHtml;
              }).join('');
             updateFavoriteButtons();
         } else {
-             container.innerHTML = isGrid ? `<div class="col-12"><p class="text-center text-muted">Nenhum produto encontrado nesta seção.</p></div>` : '<p class="text-center text-muted">Nenhum produto encontrado.</p>';
+             container.innerHTML = isGrid ? `<div class="col-12"><p class="text-center text-muted">Nenhum produto encontrado nesta loja.</p></div>` : '<p class="text-center text-muted">Nenhum produto encontrado.</p>';
         }
 
     } catch (error) {
@@ -201,16 +214,10 @@ function setupVideoPlayers() {
              video.addEventListener('ended', () => { card.classList.remove('is-playing'); });
         }
     });
-    // ====================================================================
-    // CORREÇÃO: Chamar setupMediaSliders AQUI, depois que os vídeos foram configurados
-    // ====================================================================
     setupMediaSliders();
 }
 
 function setupMediaSliders() {
-    // ====================================================================
-    // CORREÇÃO: Função de slider genérica
-    // ====================================================================
     const setupSlider = (trackId, prevId, nextId) => {
         const track = document.getElementById(trackId);
         const prevBtn = document.getElementById(prevId);
@@ -218,13 +225,12 @@ function setupMediaSliders() {
         
         if (track && prevBtn && nextBtn) {
              const scrollAmount = () => {
-                // Tenta pegar a largura do primeiro card no track
                 const firstCard = track.querySelector('.card, .card-media');
                 if (firstCard) {
-                    return firstCard.offsetWidth + 24; // Largura do card + gap (1.5rem)
+                    return firstCard.offsetWidth + 24; 
                 }
-                return 300; // Valor padrão
-            };
+                return 300;
+             };
 
             nextBtn.addEventListener('click', () => {
                 track.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
@@ -233,49 +239,116 @@ function setupMediaSliders() {
                 track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
             });
         } else {
-            // Aviso se os botões não foram encontrados para um slider
             if(track) console.warn(`Slider "${trackId}" não encontrou botões "${prevId}" ou "${nextId}".`);
         }
     };
     
-    // Configura todos os sliders da página
     setupSlider('animais-track', 'amigos-prev', 'amigos-next');
     setupSlider('videos-track', 'videos-prev', 'videos-next');
-    
-    // ====================================================================
-    // CORREÇÃO: Adicionando a lógica do slider para "Mais Vendidos"
-    // ====================================================================
     setupSlider('mais-vendidos-track', 'mais-vendidos-prev', 'mais-vendidos-next');
-    // Adiciona também para os outros sliders de produto
     setupSlider('ofertas-track', 'ofertas-prev', 'ofertas-next');
     setupSlider('recomendados-track', 'recomendados-prev', 'recomendados-next');
     setupSlider('novidades-track', 'novidades-prev', 'novidades-next');
 }
 
+/**
+ * ===================================================================
+ * ATUALIZAÇÃO PRINCIPAL: Carrega os produtos da loja selecionada
+ * ===================================================================
+ */
 function initProductLoading() {
-     const storeId = getSelectedStoreId(); 
+    
+    // Funções de Query:
+    // MODIFICAÇÃO: .eq('id_loja', storeId) está ATIVADO.
+    // Agora vai funcionar, pois storeId é um NÚMERO (1, 2, 3, ou 4).
 
-    // Funções de Query: As consultas que funcionam no Supabase
-    const ofertasQueryFn = (sb) => sb.from('produtos').select('*, preco_promocional').not('preco_promocional', 'is', null).order('data_cadastro', { descending: true }).limit(8);
-    const recomendadosQueryFn = (sb) => sb.from('produtos').select('*').order('data_cadastro', { ascending: false }).limit(8);
-    const novidadesQueryFn = (sb) => sb.from('produtos').select('*').order('data_cadastro', { ascending: false }).limit(8);
-    const maisVendidosQueryFn = (sb) => sb.from('produtos').select('*').order('quantidade_estoque', { descending: true }).limit(12);
+    const ofertasQueryFn = (sb, storeId) => sb.from('produtos')
+        .select('*, preco_promocional')
+        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .not('preco_promocional', 'is', null)
+        .order('data_cadastro', { descending: true })
+        .limit(8);
+    
+    const recomendadosQueryFn = (sb, storeId) => sb.from('produtos')
+        .select('*')
+        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .order('data_cadastro', { ascending: false })
+        .limit(8);
+        
+    const novidadesQueryFn = (sb, storeId) => sb.from('produtos')
+        .select('*')
+        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .order('data_cadastro', { ascending: false })
+        .limit(8);
 
-    // ====================================================================
-    // CORREÇÃO: Carregando todos como sliders (isGrid = false)
-    // ====================================================================
+    const maisVendidosQueryFn = (sb, storeId) => sb.from('produtos')
+        .select('*')
+        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .order('quantidade_estoque', { descending: true })
+        .limit(12);
+
     loadProducts('ofertas-track', ofertasQueryFn, false);
     loadProducts('recomendados-track', recomendadosQueryFn, false);
     loadProducts('novidades-track', novidadesQueryFn, false);
     loadProducts('mais-vendidos-track', maisVendidosQueryFn, false);
 }
 
+/**
+ * Atualiza o texto da loja na barra roxa
+ */
+function updateStoreDisplay() {
+    const storeName = getSelectedStoreName();
+    const storeSpan = document.getElementById('unidade-proxima');
+    if (storeSpan) {
+        storeSpan.textContent = `Loja: ${storeName}`;
+    }
+}
+
+/**
+ * Configura os cliques no Modal de seleção de loja
+ */
+function setupStoreSelection() {
+    const storeModal = document.getElementById('storeModal');
+    if (!storeModal) return;
+
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(storeModal);
+
+    document.querySelectorAll('.store-select-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const storeId = button.dataset.storeId;
+            const storeName = button.dataset.storeName;
+            
+            // Salva a nova escolha
+            const storeData = { id: parseInt(storeId, 10), name: storeName }; // Salva como número
+            localStorage.setItem(CHATEAU_SELECTED_STORE_KEY, JSON.stringify(storeData));
+            
+            // Atualiza o texto na barra
+            updateStoreDisplay();
+            
+            // Recarrega todos os produtos
+            initProductLoading();
+
+            // Fecha o modal
+            modalInstance.hide();
+        });
+    });
+}
+
+
+// --- Inicialização da Página ---
 document.addEventListener('DOMContentLoaded', () => {
     setupSidebar();
     setupVideoPlayers();
     
+    updateStoreDisplay(); 
+    setupStoreSelection(); 
+
     initProductLoading();
-    window.addEventListener('chateauStoreChanged', initProductLoading); 
+    
+    window.addEventListener('chateauStoreChanged', () => {
+        updateStoreDisplay();
+        initProductLoading();
+    }); 
 });
 
 // Listener global para cliques nos botões de coração

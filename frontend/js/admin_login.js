@@ -1,9 +1,31 @@
 // js/admin_login.js
 
-// Importa o cliente Supabase
 import { supabase } from '../js/supabaseClient.js';
+// Importa o "segurança" que acabamos de criar
+import { checkAdminAuth } from './admin_auth.js'; 
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    
+    // VERIFICAÇÃO INICIAL: Se o usuário já é um admin logado,
+    // não precisa fazer login de novo. Vai direto pro dashboard.
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        // Temos uma sessão. Vamos checar o 'role' silenciosamente
+        const { data: perfil } = await supabase
+            .from('perfis')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+            
+        if (perfil && perfil.role === 'admin') {
+            console.log("Admin já logado. Redirecionando para o dashboard...");
+            // O dashboard.html está na mesma pasta que admin_login.html
+            window.location.href = 'dashboard.html'; 
+            return; // Para a execução do script
+        }
+    }
+    // Se não tinha sessão, ou a sessão não era admin, continua para o login.
+
     const adminLoginForm = document.getElementById('adminLoginForm');
     
     if (adminLoginForm) {
@@ -27,7 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (authError) {
-                    throw new Error(authError.message); // Joga o erro para o catch
+                    // Trata erro de "Email não confirmado"
+                    if (authError.message.includes("Email not confirmed")) {
+                         throw new Error("Email não confirmado. Por favor, verifique sua caixa de entrada.");
+                    }
+                    throw new Error(authError.message);
                 }
 
                 if (!authData.user) {
@@ -36,34 +62,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 userId = authData.user.id; // Guarda o ID do usuário logado
 
-                // 2. Verificar se o usuário é um administrador
-                // Vamos consultar uma tabela 'perfis' que deve ter o role do usuário
-                const { data: perfilData, error: perfilError } = await supabase
-                    .from('perfis') // Assumindo que sua tabela de perfis se chama 'perfis'
-                    .select('role') // Assumindo que a coluna de permissão se chama 'role'
-                    .eq('id', userId) // Ligando ao ID do usuário do Auth
-                    .single();
-                
-                if (perfilError) {
-                    console.error("Erro ao buscar perfil:", perfilError);
-                    throw new Error("Não foi possível verificar sua permissão de acesso.");
-                }
+                // 2. Verificar se o usuário é um administrador (usando a função do admin_auth)
+                // Isso vai checar o 'role' na tabela 'perfis'
+                const adminUser = await checkAdminAuth();
 
-                // 3. Checar a permissão (role)
-                if (perfilData && perfilData.role === 'admin') {
+                if (adminUser) {
                     // É ADMIN! Redirecionar para o Dashboard.
-                    alert('Acesso de administrador concedido. Bem-vindo!');
-                    // (Estamos em /admin/admin_login.html, então o dashboard está na mesma pasta)
+                    console.log('Login de admin bem-sucedido!');
                     window.location.href = 'dashboard.html';
-                } else {
-                    // Não é admin.
-                    throw new Error("Acesso negado. Esta conta não possui privilégios de administrador.");
                 }
+                // Se não for admin, o checkAdminAuth() já cuidou de deslogar e mostrar o alerta.
 
             } catch (error) {
                 console.error('Erro no login de admin:', error.message);
                 
-                // Se o login falhou ou ele não é admin, desloga por segurança
                 if (userId) { // Se o login auth funcionou mas a permissão falhou
                     await supabase.auth.signOut();
                 }

@@ -1,34 +1,32 @@
 // js/admin_produtos.js
 
-import { supabase } from '../js/supabaseClient.js'; // Importa a conexão
+import { supabase } from '../js/supabaseClient.js';
+// Importa o "segurança"
+import { checkAdminAuth } from './admin_auth.js'; 
 
 // --- VARIÁVEIS GLOBAIS E ELEMENTOS DO DOM ---
-let productModalInstance; // Instância do Modal do Bootstrap
+let productModalInstance; 
 const productModalElement = document.getElementById('productModal');
 const productForm = document.getElementById('productForm');
 const productModalLabel = document.getElementById('productModalLabel');
-const editProductIdInput = document.getElementById('editProductId'); // Input hidden para ID
+const editProductIdInput = document.getElementById('editProductId'); 
 const saveProductButton = document.getElementById('saveProductButton');
-const addProductButton = document.getElementById('add-product-button'); // Botão principal "Adicionar"
+const addProductButton = document.getElementById('add-product-button'); 
 
 // --- FUNÇÕES AUXILIARES ---
-
-// Formata o preço para Reais (BRL)
 function formatPrice(price) {
     if (typeof price !== 'number' || isNaN(price)) { return 'Inválido'; }
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// Limpa os campos do formulário no modal
 function clearProductForm() {
-    productForm.reset(); // Limpa todos os inputs
-    editProductIdInput.value = ''; // Limpa o ID oculto
-    productModalLabel.textContent = 'Adicionar Novo Produto'; // Reseta o título
+    productForm.reset(); 
+    editProductIdInput.value = ''; 
+    productModalLabel.textContent = 'Adicionar Novo Produto'; 
     saveProductButton.textContent = 'Salvar Produto';
     saveProductButton.disabled = false;
 }
 
-// Preenche o formulário do modal com dados de um produto (para edição)
 function populateProductForm(produto) {
     if (!produto) return;
     document.getElementById('nome_produto').value = produto.nome_produto || '';
@@ -38,14 +36,11 @@ function populateProductForm(produto) {
     document.getElementById('descricao').value = produto.descricao || '';
     document.getElementById('marca').value = produto.marca || '';
     document.getElementById('tipo_produto').value = produto.tipo_produto || '';
-    // Preencha outros campos aqui se os adicionou no modal
-    editProductIdInput.value = produto.id_produto; // Guarda o ID no campo oculto
-    productModalLabel.textContent = `Editar Produto (ID: ${produto.id_produto})`; // Atualiza título
+    editProductIdInput.value = produto.id_produto; 
+    productModalLabel.textContent = `Editar Produto (ID: ${produto.id_produto})`; 
 }
 
 // --- FUNÇÕES CRUD (Create, Read, Update, Delete) ---
-
-// READ: Busca e exibe todos os produtos na tabela
 async function loadAndDisplayProducts() {
     const tableBody = document.getElementById('product-table-body');
     const loadingRow = document.getElementById('loading-row');
@@ -55,13 +50,15 @@ async function loadAndDisplayProducts() {
 
     loadingRow.style.display = 'table-row';
     noProductsRow.style.display = 'none';
-    tableBody.innerHTML = ''; // Limpa antes de carregar
+    
+    // Limpa linhas antigas
+    const existingRows = tableBody.querySelectorAll("tr:not(#loading-row):not(#no-products-row)");
+    existingRows.forEach(row => row.remove());
 
     try {
-        // Busca incluindo mais colunas para a edição
         let { data: produtos, error } = await supabase
             .from('produtos')
-            .select('id_produto, nome_produto, preco, quantidade_estoque, url_imagem, descricao, marca, tipo_produto') // Adicione mais colunas se precisar editar
+            .select('id_produto, nome_produto, preco, quantidade_estoque, url_imagem, descricao, marca, tipo_produto')
             .order('nome_produto', { ascending: true });
 
         if (error) { throw error; }
@@ -84,7 +81,7 @@ async function loadAndDisplayProducts() {
                         </td>
                     </tr>
                 `;
-                tableBody.innerHTML += rowHtml;
+                tableBody.insertAdjacentHTML('beforeend', rowHtml);
             });
         } else {
             noProductsRow.style.display = 'table-row';
@@ -97,151 +94,157 @@ async function loadAndDisplayProducts() {
     }
 }
 
-// READ (Single): Busca detalhes de um produto específico para edição
 async function fetchProductDetails(productId) {
     try {
         let { data: produto, error } = await supabase
             .from('produtos')
-            .select('id_produto, nome_produto, preco, quantidade_estoque, url_imagem, descricao, marca, tipo_produto') // Colunas do formulário
+            .select('id_produto, nome_produto, preco, quantidade_estoque, url_imagem, descricao, marca, tipo_produto') 
             .eq('id_produto', productId)
-            .single(); // Espera apenas um resultado
+            .single(); 
 
         if (error) { throw error; }
-        return produto; // Retorna os dados do produto
+        return produto; 
 
     } catch (error) {
         console.error(`Erro ao buscar detalhes do produto ID ${productId}:`, error.message);
         alert(`Não foi possível carregar os dados do produto ID ${productId}. Tente novamente.`);
-        return null; // Retorna nulo em caso de erro
+        return null; 
     }
 }
 
-// CREATE: Adiciona um novo produto ao banco
 async function addProduct(productData) {
     try {
+        // Precisamos de um ID, já que a sua tabela não é 'serial' para id_produto
+        // Vamos pegar o ID mais alto e somar 1
+        let { data: maxIdData, error: maxIdError } = await supabase
+            .from('produtos')
+            .select('id_produto')
+            .order('id_produto', { descending: true })
+            .limit(1)
+            .single();
+            
+        if (maxIdError && maxIdError.code !== 'PGRST116') { // PGRST116 = 0 resultados, o que é ok
+             throw new Error('Erro ao buscar último ID: ' + maxIdError.message);
+        }
+
+        const nextId = maxIdData ? maxIdData.id_produto + 1 : 1;
+        productData.id_produto = nextId; // Adiciona o novo ID ao objeto
+
         const { data, error } = await supabase
             .from('produtos')
-            .insert([productData]) // Insere o objeto com os dados
-            .select(); // Retorna os dados inseridos
+            .insert([productData]) 
+            .select(); 
 
         if (error) { throw error; }
         
         console.log('Produto adicionado:', data);
         alert('Produto adicionado com sucesso!');
-        return true; // Indica sucesso
+        return true; 
 
     } catch (error) {
         console.error('Erro ao adicionar produto:', error.message);
         alert(`Erro ao adicionar produto: ${error.message}`);
-        return false; // Indica falha
+        return false; 
     }
 }
 
-// UPDATE: Atualiza um produto existente no banco
 async function updateProduct(productId, productData) {
     try {
         const { data, error } = await supabase
             .from('produtos')
-            .update(productData) // Atualiza com os novos dados
-            .eq('id_produto', productId) // Onde o ID corresponde
-            .select(); // Retorna os dados atualizados
+            .update(productData) 
+            .eq('id_produto', productId) 
+            .select(); 
 
         if (error) { throw error; }
 
         console.log('Produto atualizado:', data);
         alert('Produto atualizado com sucesso!');
-        return true; // Indica sucesso
+        return true; 
 
     } catch (error) {
         console.error(`Erro ao atualizar produto ID ${productId}:`, error.message);
         alert(`Erro ao atualizar produto: ${error.message}`);
-        return false; // Indica falha
+        return false; 
     }
 }
 
-// DELETE: Remove um produto do banco
 async function deleteProduct(productId) {
     try {
         const { error } = await supabase
             .from('produtos')
             .delete()
-            .eq('id_produto', productId); // Onde o ID corresponde
+            .eq('id_produto', productId); 
 
         if (error) { throw error; }
 
         console.log(`Produto ID ${productId} excluído.`);
         alert('Produto excluído com sucesso!');
-        return true; // Indica sucesso
+        return true; 
 
     } catch (error) {
         console.error(`Erro ao excluir produto ID ${productId}:`, error.message);
         alert(`Erro ao excluir produto: ${error.message}`);
-        return false; // Indica falha
+        return false; 
     }
 }
 
 
 // --- EVENT LISTENERS ---
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. ADICIONA O "SEGURANÇA"
+    const adminUser = await checkAdminAuth();
+    if (!adminUser) return; // Para a execução se não for admin
 
-// Inicializa a instância do Modal do Bootstrap quando o DOM está pronto
-document.addEventListener('DOMContentLoaded', () => {
+    // 2. SÓ RODA O CÓDIGO DA PÁGINA SE FOR ADMIN
+    console.log("Admin verificado. Carregando produtos...");
+    
     if (productModalElement) {
         productModalInstance = new bootstrap.Modal(productModalElement);
     } else {
         console.error("Elemento do Modal #productModal não encontrado.");
     }
     
-    // Carrega a lista inicial de produtos
     loadAndDisplayProducts();
 });
 
-// Listener para o botão principal "Adicionar Novo Produto"
 if (addProductButton) {
     addProductButton.addEventListener('click', () => {
-        clearProductForm(); // Limpa o formulário para garantir que está no modo "Adicionar"
-        // O modal abre automaticamente via atributos data-bs-*
+        clearProductForm(); 
     });
 }
 
-// Listener para cliques nos botões dentro da tabela (Editar, Excluir)
 document.addEventListener('click', async (event) => {
     const target = event.target;
     const editButton = target.closest('.btn-edit');
     const deleteButton = target.closest('.btn-delete');
 
-    // Se clicou em EDITAR
     if (editButton) {
         const productId = editButton.dataset.productId;
-        console.log(`Abrindo modal para editar produto ID: ${productId}`);
-        clearProductForm(); // Limpa antes de preencher
-        const productData = await fetchProductDetails(productId); // Busca dados no Supabase
+        clearProductForm(); 
+        const productData = await fetchProductDetails(productId); 
         if (productData) {
-            populateProductForm(productData); // Preenche o formulário
-            // O modal abre via atributos data-bs-*, não precisa chamar productModalInstance.show()
+            populateProductForm(productData); 
         }
         return; 
     }
 
-    // Se clicou em EXCLUIR
     if (deleteButton) {
         const productId = deleteButton.dataset.productId;
-        const productName = deleteButton.closest('tr').querySelector('td:nth-child(2)').textContent; // Pega o nome da linha
+        const productName = deleteButton.closest('tr').querySelector('td:nth-child(2)').textContent; 
         
         if (confirm(`Tem certeza que deseja EXCLUIR o produto "${productName}" (ID: ${productId})?`)) {
-            const success = await deleteProduct(productId); // Chama a função de exclusão
+            const success = await deleteProduct(productId); 
             if (success) {
-                // Remove a linha da tabela visualmente sem recarregar tudo
                 const rowToRemove = document.getElementById(`product-row-${productId}`);
                 if (rowToRemove) {
                     rowToRemove.remove();
                 } else {
-                    // Se não conseguir remover a linha, recarrega a lista
                     loadAndDisplayProducts(); 
                 }
-                // Verifica se a tabela ficou vazia
                 const tableBody = document.getElementById('product-table-body');
-                if (tableBody && tableBody.children.length === 0) {
-                     document.getElementById('no-products-row').style.display = 'table-row';
+                if (tableBody && tableBody.children.length === 1) { // Só sobrou o <tr> de loading
+                    document.getElementById('no-products-row').style.display = 'table-row';
                 }
             }
         }
@@ -249,13 +252,11 @@ document.addEventListener('click', async (event) => {
     }
 });
 
-// Listener para o ENVIO do formulário do modal (Adicionar ou Salvar Edição)
 if (productForm) {
     productForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Impede o envio padrão HTML
-        saveProductButton.disabled = true; // Desabilita o botão
+        event.preventDefault(); 
+        saveProductButton.disabled = true; 
 
-        // Pega os dados do formulário
         const productData = {
             nome_produto: document.getElementById('nome_produto').value.trim(),
             preco: parseFloat(document.getElementById('preco').value) || null,
@@ -264,47 +265,35 @@ if (productForm) {
             descricao: document.getElementById('descricao').value.trim() || null,
             marca: document.getElementById('marca').value.trim() || null,
             tipo_produto: document.getElementById('tipo_produto').value.trim() || null,
-            // Adicione outros campos aqui se necessário
         };
 
-        // Verifica campos obrigatórios
         if (!productData.nome_produto || productData.preco === null || isNaN(productData.preco) || productData.quantidade_estoque === null || isNaN(productData.quantidade_estoque)) {
              alert('Por favor, preencha todos os campos obrigatórios (*).');
              saveProductButton.disabled = false;
              return;
         }
 
-        const editingId = editProductIdInput.value; // Pega o ID (se estiver editando)
+        const editingId = editProductIdInput.value; 
 
         let success = false;
         if (editingId) {
-            // --- MODO EDIÇÃO ---
             saveProductButton.textContent = 'Salvando Alterações...';
-            console.log(`Atualizando produto ID ${editingId} com dados:`, productData);
             success = await updateProduct(editingId, productData);
         } else {
-            // --- MODO ADIÇÃO ---
             saveProductButton.textContent = 'Adicionando Produto...';
-            console.log("Adicionando novo produto com dados:", productData);
-             // IMPORTANTE: Se o seu id_produto não for gerado automaticamente pelo banco,
-             // você precisará definir um ID aqui antes de inserir.
-             // Ex: productData.id_produto = await getNextProductId();
             success = await addProduct(productData);
         }
 
-        // Se a operação foi bem-sucedida
         if (success) {
-            productModalInstance.hide(); // Fecha o modal
-            loadAndDisplayProducts(); // Recarrega a lista de produtos na tabela
+            productModalInstance.hide(); 
+            loadAndDisplayProducts(); 
         } else {
-            // Reabilita o botão em caso de erro
            saveProductButton.disabled = false;
            saveProductButton.textContent = editingId ? 'Salvar Alterações' : 'Salvar Produto';
         }
     });
 }
 
-// Limpa o formulário quando o modal é fechado (opcional, mas bom para UX)
 if (productModalElement) {
     productModalElement.addEventListener('hidden.bs.modal', () => {
         clearProductForm();

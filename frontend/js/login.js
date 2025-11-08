@@ -1,4 +1,5 @@
 // js/login.js
+// (Login Unificado para Cliente e Admin)
 
 import { supabase } from '../js/supabaseClient.js';
 
@@ -20,23 +21,57 @@ document.addEventListener('DOMContentLoaded', () => {
             submitButton.textContent = 'ACESSANDO...';
 
             try {
-                // Tenta fazer o login com o Supabase Auth
-                const { error } = await supabase.auth.signInWithPassword({
+                // PASSO 1: AUTENTICAR (Ver se email e senha batem)
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password,
                 });
 
-                if (error) {
-                    throw error;
+                if (authError) {
+                    throw authError; // Joga o erro para o catch
                 }
                 
-                // O Supabase SDK armazena a sessão (token) automaticamente no localStorage.
-                // Agora verificamos o redirect.
-                const redirectTo = localStorage.getItem('redirectAfterLogin') || '../home.html';
-                localStorage.removeItem('redirectAfterLogin');
+                if (!authData.user) {
+                    throw new Error("Dados de usuário não retornados.");
+                }
 
-                alert('Login bem-sucedido! Redirecionando...');
-                window.location.href = redirectTo;
+                // PASSO 2: AUTORIZAR (Ver se é admin ou cliente)
+                const userId = authData.user.id;
+                
+                console.log("Usuário autenticado. Verificando perfil...");
+
+                // AGORA ISTO VAI FUNCIONAR, pois o supabaseClient sabe olhar o schema 'public'
+                const { data: perfil, error: perfilError } = await supabase
+                    .from('perfis')       
+                    .select('role')     
+                    .eq('id', userId)   
+                    .single();
+
+                if (perfilError) {
+                    console.error("Erro ao buscar perfil:", perfilError.message);
+                    await supabase.auth.signOut();
+                    throw new Error("Erro ao verificar seu perfil. (O usuário existe no Auth, mas não na tabela 'perfis'?)");
+                }
+
+                if (!perfil) {
+                    await supabase.auth.signOut();
+                    throw new Error("Perfil de usuário não encontrado. Contate o suporte.");
+                }
+
+                // PASSO 3: REDIRECIONAR
+                if (perfil.role === 'admin') {
+                    // É ADMIN!
+                    alert('Acesso de administrador concedido. Bem-vindo!');
+                    window.location.href = '../admin/dashboard.html';
+                
+                } else {
+                    // É CLIENTE!
+                    const redirectTo = localStorage.getItem('redirectAfterLogin') || '../home.html';
+                    localStorage.removeItem('redirectAfterLogin');
+
+                    alert('Login bem-sucedido! Redirecionando...');
+                    window.location.href = redirectTo;
+                }
 
             } catch (error) {
                 console.error('Erro no login:', error.message);

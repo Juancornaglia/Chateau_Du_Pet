@@ -1,25 +1,25 @@
 // js/admin_horarios.js
 
-import { supabase } from '../js/supabaseClient.js'; // Importa a conexão
+import { supabase } from '../js/supabaseClient.js';
+// Importa o "segurança"
+import { checkAdminAuth } from './admin_auth.js'; 
 
 // --- VARIÁVEIS GLOBAIS E ELEMENTOS DO DOM ---
 const blockDayForm = document.getElementById('blockDayForm');
 const capacityManagementContainer = document.getElementById('capacityManagementContainer');
-const storesSelectBlockDay = document.getElementById('block-store'); // Select de lojas no form de bloqueio
-const blockedDaysList = document.getElementById('blockedDaysList'); // Onde listamos os dias bloqueados
+const storesSelectBlockDay = document.getElementById('block-store'); 
+const blockedDaysList = document.getElementById('blockedDaysList'); 
 const loadingCapacity = document.getElementById('loadingCapacity');
 const loadingBlockedDays = document.getElementById('loadingBlockedDays');
 
-let storesData = []; // Para guardar os dados das lojas carregados
-let servicesData = []; // Para guardar os dados dos serviços carregados
+let storesData = []; 
+let servicesData = []; 
 
 // --- FUNÇÕES AUXILIARES ---
-
-// Formata Data (Ex: 26/10/2025)
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     try {
-        const date = new Date(dateString + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso
+        const date = new Date(dateString + 'T00:00:00'); // Evita problemas de fuso
         return date.toLocaleDateString('pt-BR');
     } catch (e) {
         console.error("Erro ao formatar data:", e);
@@ -28,8 +28,6 @@ function formatDate(dateString) {
 }
 
 // --- LÓGICA DE BLOQUEIO DE DIAS ---
-
-// Busca e exibe os dias já bloqueados
 async function loadBlockedDays() {
     if (!blockedDaysList || !loadingBlockedDays) return;
     loadingBlockedDays.style.display = 'block';
@@ -44,7 +42,7 @@ async function loadBlockedDays() {
                 motivo,
                 lojas ( id_loja, nome_loja )
             `)
-            .order('data_bloqueada', { ascending: false }); // Mais recentes primeiro
+            .order('data_bloqueada', { ascending: false }); 
 
         if (error) throw error;
 
@@ -77,18 +75,17 @@ async function loadBlockedDays() {
     }
 }
 
-// Bloqueia um novo dia
 async function blockDay(event) {
     event.preventDefault();
     if (!blockDayForm) return;
 
     const dateInput = document.getElementById('block-date');
     const storeSelect = document.getElementById('block-store');
-    const reasonInput = document.getElementById('block-reason'); // Input de motivo adicionado no HTML
+    const reasonInput = document.getElementById('block-reason');
     const button = blockDayForm.querySelector('button[type="submit"]');
 
     const date = dateInput.value;
-    const storeId = storeSelect.value === 'ALL' ? null : parseInt(storeSelect.value); // NULL para 'Todas as Lojas'
+    const storeId = storeSelect.value === 'ALL' ? null : parseInt(storeSelect.value);
     const reason = reasonInput.value.trim() || null;
 
     if (!date) {
@@ -96,13 +93,12 @@ async function blockDay(event) {
         return;
     }
 
-    // Validação simples para data no passado (opcional)
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Zera hora para comparar só a data
+    today.setHours(0, 0, 0, 0); 
     const selectedDate = new Date(date + 'T00:00:00');
     if (selectedDate < today) {
          if(!confirm('A data selecionada está no passado. Deseja bloquear mesmo assim?')) {
-              return;
+             return;
          }
     }
 
@@ -120,16 +116,15 @@ async function blockDay(event) {
             }]);
 
         if (error) {
-            // Trata erro de chave única (dia/loja já bloqueado)
-            if (error.code === '23505') { // Código de erro do PostgreSQL para unique violation
+            if (error.code === '23505') { 
                  alert(`Erro: A data ${formatDate(date)} já está bloqueada para ${storeId === null ? 'todas as lojas' : storeSelect.options[storeSelect.selectedIndex].text}.`);
             } else {
-                throw error;
+                 throw error;
             }
         } else {
              alert(`Dia ${formatDate(date)} bloqueado com sucesso!`);
-             blockDayForm.reset(); // Limpa o formulário
-             loadBlockedDays(); // Recarrega a lista de bloqueios
+             blockDayForm.reset(); 
+             loadBlockedDays(); 
         }
 
     } catch (error) {
@@ -141,7 +136,6 @@ async function blockDay(event) {
     }
 }
 
-// Desbloqueia um dia
 async function unblockDay(blockId) {
     if (!blockId) return;
 
@@ -155,7 +149,7 @@ async function unblockDay(blockId) {
             if (error) throw error;
 
             alert('Dia desbloqueado com sucesso!');
-            loadBlockedDays(); // Recarrega a lista
+            loadBlockedDays(); 
 
         } catch (error) {
             console.error("Erro ao desbloquear dia:", error.message);
@@ -165,15 +159,12 @@ async function unblockDay(blockId) {
 }
 
 // --- LÓGICA DE GESTÃO DE CAPACIDADE ---
-
-// Carrega as regras de capacidade existentes
 async function loadCapacityRules() {
     if (!capacityManagementContainer || !loadingCapacity) return;
     loadingCapacity.style.display = 'block';
-    capacityManagementContainer.innerHTML = ''; // Limpa antes
+    capacityManagementContainer.innerHTML = ''; 
 
     try {
-        // Busca todas as regras existentes, juntando nome da loja e serviço
         const { data, error } = await supabase
             .from('servicos_loja_regras')
             .select(`
@@ -190,7 +181,6 @@ async function loadCapacityRules() {
         loadingCapacity.style.display = 'none';
 
         if (data && data.length > 0) {
-            // Agrupa as regras por loja para melhor visualização
             const rulesByStore = data.reduce((acc, rule) => {
                 const storeName = rule.lojas?.nome_loja || 'Loja Desconhecida';
                 if (!acc[storeName]) {
@@ -200,7 +190,6 @@ async function loadCapacityRules() {
                 return acc;
             }, {});
 
-            // Cria um card para cada loja
             for (const storeName in rulesByStore) {
                 const rules = rulesByStore[storeName];
                 let storeCardHtml = `
@@ -250,7 +239,6 @@ async function loadCapacityRules() {
     }
 }
 
-// Salva a alteração de capacidade ou status
 async function saveCapacityChange(ruleId, newCapacity, newStatus) {
     if (!ruleId || (newCapacity === null && newStatus === null)) return;
 
@@ -262,16 +250,14 @@ async function saveCapacityChange(ruleId, newCapacity, newStatus) {
         dataToUpdate.ativo = newStatus;
     }
 
-    if (Object.keys(dataToUpdate).length === 0) return; // Nada a atualizar
+    if (Object.keys(dataToUpdate).length === 0) return; 
 
-    // Adiciona feedback visual no botão Salvar
     const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
      const originalIcon = '<i class="bi bi-check-lg"></i>';
     if(saveButton){
-        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-        saveButton.disabled = true;
+         saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+         saveButton.disabled = true;
     }
-
 
     try {
         const { error } = await supabase
@@ -282,7 +268,6 @@ async function saveCapacityChange(ruleId, newCapacity, newStatus) {
         if (error) throw error;
 
         console.log(`Regra ${ruleId} atualizada com sucesso.`);
-        // Feedback visual de sucesso (opcional, pode ser só reabilitar o botão)
         if(saveButton){
              saveButton.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>'; // Ícone de sucesso
              setTimeout(() => {
@@ -290,7 +275,6 @@ async function saveCapacityChange(ruleId, newCapacity, newStatus) {
                  saveButton.disabled = true; // Desabilita de novo pois já salvou
              }, 1500);
         }
-        // Atualiza o texto do label Ativo/Inativo
         if (newStatus !== null) {
             const switchLabel = capacityManagementContainer.querySelector(`label[for="status-${ruleId}"]`);
              if (switchLabel) {
@@ -298,42 +282,35 @@ async function saveCapacityChange(ruleId, newCapacity, newStatus) {
              }
         }
 
-
     } catch (error) {
         console.error("Erro ao salvar alteração de capacidade/status:", error.message);
         alert(`Erro ao salvar: ${error.message}`);
          if(saveButton){
-             saveButton.innerHTML = originalIcon; // Volta ao ícone normal em caso de erro
-             saveButton.disabled = false; // Permite tentar salvar de novo
-        }
+             saveButton.innerHTML = originalIcon; 
+             saveButton.disabled = false; 
+         }
     }
 }
 
-
 // --- INICIALIZAÇÃO E EVENT LISTENERS ---
-
-// Função para carregar dados iniciais (lojas, serviços)
 async function loadInitialData() {
     try {
-        // Carrega Lojas
-        const { data: stores, error: storesError } = await supabase.from('loja').select('id_loja, nome_loja').order('nome_loja');
+        // CORRIGIDO: sua tabela é 'lojas' e não 'loja'
+        const { data: stores, error: storesError } = await supabase.from('lojas').select('id_loja, nome_loja').order('nome_loja');
         if (storesError) throw storesError;
         storesData = stores || [];
 
-        // Popula o select de lojas no formulário de bloqueio
         if (storesSelectBlockDay) {
-            storesSelectBlockDay.innerHTML = '<option value="ALL">Todas as Lojas</option>'; // Opção padrão
+            storesSelectBlockDay.innerHTML = '<option value="ALL">Todas as Lojas</option>'; 
             storesData.forEach(store => {
                 storesSelectBlockDay.innerHTML += `<option value="${store.id_loja}">${store.nome_loja}</option>`;
             });
         }
 
-        // Carrega Serviços (necessário para adicionar novas regras no futuro)
         const { data: services, error: servicesError } = await supabase.from('servicos').select('id_servico, nome_servico').order('nome_servico');
         if (servicesError) throw servicesError;
         servicesData = services || [];
 
-        // Agora carrega as regras e bloqueios que dependem das lojas
         loadBlockedDays();
         loadCapacityRules();
 
@@ -343,12 +320,10 @@ async function loadInitialData() {
     }
 }
 
-// Listener para o formulário de Bloquear Dia
 if (blockDayForm) {
     blockDayForm.addEventListener('submit', blockDay);
 }
 
-// Listener para cliques nos botões de Desbloquear (na lista de dias bloqueados)
 if (blockedDaysList) {
     blockedDaysList.addEventListener('click', (event) => {
         const unblockButton = event.target.closest('.btn-unblock');
@@ -359,26 +334,24 @@ if (blockedDaysList) {
     });
 }
 
-// Listener para alterações nos inputs de capacidade ou switches de status
 if (capacityManagementContainer) {
     capacityManagementContainer.addEventListener('input', (event) => {
         if (event.target.classList.contains('capacity-input')) {
             const ruleId = event.target.dataset.ruleId;
             const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
-            if (saveButton) saveButton.disabled = false; // Habilita o botão Salvar
+            if (saveButton) saveButton.disabled = false; 
         }
     });
     capacityManagementContainer.addEventListener('change', (event) => {
          if (event.target.classList.contains('status-switch')) {
             const ruleId = event.target.dataset.ruleId;
             const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
-            if (saveButton) saveButton.disabled = false; // Habilita o botão Salvar
+            if (saveButton) saveButton.disabled = false; 
         }
     });
 
-    // Listener para cliques nos botões SALVAR de capacidade/status
      capacityManagementContainer.addEventListener('click', (event) => {
-        const saveButton = event.target.closest('.btn-save-capacity');
+         const saveButton = event.target.closest('.btn-save-capacity');
          if (saveButton && !saveButton.disabled) {
              const ruleId = saveButton.dataset.ruleId;
              const capacityInput = capacityManagementContainer.querySelector(`#capacity-${ruleId}`);
@@ -397,6 +370,13 @@ if (capacityManagementContainer) {
      });
 }
 
-
 // --- INICIALIZAÇÃO GERAL ---
-document.addEventListener('DOMContentLoaded', loadInitialData);
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. ADICIONA O "SEGURANÇA"
+    const adminUser = await checkAdminAuth();
+    if (!adminUser) return; // Para a execução se não for admin
+
+    // 2. SÓ CARREGA OS DADOS SE FOR ADMIN
+    console.log("Admin verificado. Carregando dados de horários...");
+    loadInitialData();
+});
