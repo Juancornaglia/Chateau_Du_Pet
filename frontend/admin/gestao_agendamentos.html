@@ -25,7 +25,6 @@
     <main class="admin-main-content">
         <h1>Gestão de Agendamentos</h1>
         <p class="lead">Visualize e gerencie os horários marcados pelos clientes.</p>
-
         <div class="table-responsive">
             <table class="table table-striped table-hover mt-4 align-middle">
                 <thead class="table-light">
@@ -36,38 +35,39 @@
                         <th scope="col">Loja</th>
                         <th scope="col">Data/Hora</th>
                         <th scope="col">Status</th>
-                        <th scope="col" style="width: 150px;">Ações</th> </tr>
+                        <th scope="col" style="width: 150px;">Ações</th> 
+                    </tr>
                 </thead>
                 <tbody id="appointments-table-body">
                     <tr id="loading-row-appointments">
-                        <td colspan="8" class="text-center p-4"> <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>
+                        <td colspan="8" class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>
                             <p class="mt-2 mb-0">Carregando agendamentos...</p>
                         </td>
                     </tr>
                     <tr id="no-appointments-row" style="display: none;">
-                        <td colspan="8" class="text-center text-muted p-4">Nenhum agendamento encontrado.</td> </tr>
-                    </tbody>
+                        <td colspan="8" class="text-center text-muted p-4">Nenhum agendamento encontrado.</td> 
+                    </tr>
+                </tbody>
             </table>
         </div>
     </main>
 
-    <div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel" aria-hidden="true">
+    <div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="appointmentDetailModalLabel">Detalhes do Agendamento</h5>
+                    <h5 class="modal-title">Detalhes do Agendamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="appointmentDetailModalBody">
-                    <p class="text-center"><span class="spinner-border spinner-border-sm"></span> Carregando detalhes...</p>
+                    <p class="text-center"><span class="spinner-border spinner-border-sm"></span> Carregando...</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/supabaseClient.js" type="module"></script>
@@ -78,10 +78,9 @@
         const logoutButton = document.getElementById('logout-button');
         if(logoutButton) {
             logoutButton.addEventListener('click', async () => {
-                if(confirm('Tem certeza que deseja sair do painel de administração?')) {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) { alert('Erro ao sair: ' + error.message); }
-                    else { alert('Você saiu da sua conta de administrador.'); window.location.href = 'admin_login.html'; }
+                if(confirm('Tem certeza que deseja sair?')) {
+                    await supabase.auth.signOut();
+                    window.location.href = '../usuario/login.html'; 
                 }
             });
         }

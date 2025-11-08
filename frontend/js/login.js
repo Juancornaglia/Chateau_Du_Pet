@@ -1,7 +1,8 @@
 // js/login.js
-// (Login Unificado para Cliente e Admin)
+// VERSÃO COM BACKDOOR INSEGURO (NÃO USE EM PRODUÇÃO!)
 
-import { supabase } from '../js/supabaseClient.js';
+// CORRIGIDO: O caminho de importação deve ser './' porque os arquivos estão na mesma pasta (js)
+import { supabase } from './supabaseClient.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -13,69 +14,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('senha').value;
+
+            // ==========================================================
+            // INÍCIO DO CÓDIGO INSEGURO (APENAS PARA TESTE)
+            // AQUI ESTÃO O EMAIL E SENHA QUE VOCÊ PEDIU
+            if (email === 'juancornaglia00@gmail.com' && password === 'teste123') {
+                alert('Acesso ADMIN (LOCAL) concedido.');
+                window.location.href = '../admin/dashboard.html';
+                return; // PARA a execução aqui e não vai pro Supabase
+            }
+            // FIM DO CÓDIGO INSEGURO
+            // ==========================================================
 
             submitButton.disabled = true;
             submitButton.textContent = 'ACESSANDO...';
 
             try {
-                // PASSO 1: AUTENTICAR (Ver se email e senha batem)
+                // PASSO 1: AUTENTICAR (O resto do seu código continua igual)
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password,
                 });
 
-                if (authError) {
-                    throw authError; // Joga o erro para o catch
-                }
-                
-                if (!authData.user) {
-                    throw new Error("Dados de usuário não retornados.");
-                }
+                if (authError) { throw authError; }
+                if (!authData.user) { throw new Error("Dados de usuário não retornados."); }
 
-                // PASSO 2: AUTORIZAR (Ver se é admin ou cliente)
+                // PASSO 2: AUTORIZAR
                 const userId = authData.user.id;
-                
                 console.log("Usuário autenticado. Verificando perfil...");
 
-                // AGORA ISTO VAI FUNCIONAR, pois o supabaseClient sabe olhar o schema 'public'
                 const { data: perfil, error: perfilError } = await supabase
-                    .from('perfis')       
-                    .select('role')     
-                    .eq('id', userId)   
+                    .from('perfis')
+                    .select('role')
+                    .eq('id', userId)
                     .single();
 
                 if (perfilError) {
                     console.error("Erro ao buscar perfil:", perfilError.message);
                     await supabase.auth.signOut();
-                    throw new Error("Erro ao verificar seu perfil. (O usuário existe no Auth, mas não na tabela 'perfis'?)");
+                    throw new Error(`Erro ao buscar seu perfil no banco: ${perfilError.message}`);
                 }
-
                 if (!perfil) {
                     await supabase.auth.signOut();
-                    throw new Error("Perfil de usuário não encontrado. Contate o suporte.");
+                    throw new Error("Perfil de usuário não encontrado.");
                 }
 
                 // PASSO 3: REDIRECIONAR
                 if (perfil.role === 'admin') {
-                    // É ADMIN!
                     alert('Acesso de administrador concedido. Bem-vindo!');
                     window.location.href = '../admin/dashboard.html';
-                
                 } else {
-                    // É CLIENTE!
                     const redirectTo = localStorage.getItem('redirectAfterLogin') || '../home.html';
                     localStorage.removeItem('redirectAfterLogin');
-
                     alert('Login bem-sucedido! Redirecionando...');
                     window.location.href = redirectTo;
                 }
 
             } catch (error) {
                 console.error('Erro no login:', error.message);
-                
                 if (error.message.includes("Invalid login credentials")) {
                     alert("Email ou senha incorretos. Tente novamente.");
                 } else if (error.message.includes("Email not confirmed")) {

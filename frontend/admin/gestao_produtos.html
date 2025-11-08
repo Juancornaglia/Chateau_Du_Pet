@@ -50,70 +50,66 @@
                         </td>
                     </tr>
                     <tr id="no-products-row" style="display: none;">
-                        <td colspan="5" class="text-center text-muted p-4">Nenhum produto cadastrado ainda. Clique em "Adicionar Novo Produto" para começar.</td>
+                        <td colspan="5" class="text-center text-muted p-4">Nenhum produto cadastrado ainda.</td>
                     </tr>
                     </tbody>
             </table>
         </div>
     </main>
 
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg"> <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel">Adicionar Novo Produto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="productForm">
-                        <input type="hidden" id="editProductId">
-
-                        <div class="mb-3">
-                            <label for="nome_produto" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nome_produto" required>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="preco" class="form-label">Preço (R$) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="preco" required placeholder="Ex: 29.90">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="quantidade_estoque" class="form-label">Estoque <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="quantidade_estoque" required placeholder="Ex: 50">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="url_imagem" class="form-label">URL da Imagem</label>
-                            <input type="url" class="form-control" id="url_imagem" placeholder="https://exemplo.com/imagem.jpg">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="descricao" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="descricao" rows="3"></textarea>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="marca" class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca">
-                            </div>
-                             <div class="col-md-6 mb-3">
-                                <label for="tipo_produto" class="form-label">Tipo/Categoria</label>
-                                <input type="text" class="form-control" id="tipo_produto" placeholder="Ex: Ração, Brinquedo, Acessório">
-                            </div>
-                        </div>
-                        </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="productForm" class="btn btn-primary" id="saveProductButton">Salvar Produto</button>
-                </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Adicionar Novo Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="editProductId">
+                    <div class="mb-3">
+                        <label for="nome_produto" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="nome_produto" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="preco" class="form-label">Preço (R$) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control" id="preco" required placeholder="Ex: 29.90">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="quantidade_estoque" class="form-label">Estoque <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="quantidade_estoque" required placeholder="Ex: 50">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="url_imagem" class="form-label">URL da Imagem</label>
+                        <input type="url" class="form-control" id="url_imagem" placeholder="https://exemplo.com/imagem.jpg">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="marca" class="form-label">Marca</label>
+                            <input type="text" class="form-control" id="marca">
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="tipo_produto" class="form-label">Tipo/Categoria</label>
+                            <input type="text" class="form-control" id="tipo_produto" placeholder="Ex: Ração, Brinquedo, Acessório">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="productForm" class="btn btn-primary" id="saveProductButton">Salvar Produto</button>
+            </div>
+        </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> <script src="../js/supabaseClient.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="../js/supabaseClient.js" type="module"></script>
     <script src="../js/admin_produtos.js" type="module"></script>
 
     <script type="module">
@@ -121,10 +117,9 @@
         const logoutButton = document.getElementById('logout-button');
         if(logoutButton) {
             logoutButton.addEventListener('click', async () => {
-                if(confirm('Tem certeza que deseja sair do painel de administração?')) {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) { alert('Erro ao sair: ' + error.message); }
-                    else { alert('Você saiu da sua conta de administrador.'); window.location.href = 'admin_login.html'; }
+                if(confirm('Tem certeza que deseja sair?')) {
+                    await supabase.auth.signOut();
+                    window.location.href = '../usuario/login.html'; 
                 }
             });
         }

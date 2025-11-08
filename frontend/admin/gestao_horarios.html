@@ -28,9 +28,7 @@
 
         <section class="mt-4">
             <div class="card">
-                <div class="card-header fw-bold">
-                    Bloquear um Dia Inteiro (Feriado, Manutenção, etc.)
-                </div>
+                <div class="card-header fw-bold">Bloquear um Dia Inteiro</div>
                 <div class="card-body">
                     <form id="blockDayForm" class="row g-3 align-items-end">
                         <div class="col-md-4">
@@ -41,7 +39,7 @@
                             <label for="block-store" class="form-label">Para a Loja</label>
                             <select id="block-store" class="form-select">
                                 <option value="ALL">Todas as Lojas</option>
-                                </select>
+                            </select>
                         </div>
                          <div class="col-md-4">
                             <label for="block-reason" class="form-label">Motivo (Opcional)</label>
@@ -55,16 +53,11 @@
             </div>
 
             <div class="card mt-3">
-                 <div class="card-header">
-                     Dias Atualmente Bloqueados
-                 </div>
-                 <div class="card-body p-0">
-                     <div id="loadingBlockedDays" class="text-center p-3" style="display: none;">
-                         <span class="spinner-border spinner-border-sm"></span> Carregando...
-                     </div>
-                     <ul class="list-group list-group-flush" id="blockedDaysList">
-                         </ul>
-                 </div>
+                <div class="card-header">Dias Atualmente Bloqueados</div>
+                <div class="card-body p-0">
+                    <div id="loadingBlockedDays" class="text-center p-3"><span class="spinner-border spinner-border-sm"></span> Carregando...</div>
+                    <ul class="list-group list-group-flush" id="blockedDaysList"></ul>
+                </div>
             </div>
         </section>
 
@@ -72,13 +65,10 @@
 
         <section>
             <h2 class="mb-3">Capacidade de Atendimento por Serviço/Loja</h2>
-            <p>Defina quantos pets podem ser atendidos ao mesmo tempo para cada serviço em cada loja e se o serviço está ativo.</p>
-             <div id="loadingCapacity" class="text-center p-3" style="display: none;">
-                 <span class="spinner-border text-primary"></span> Carregando regras...
-             </div>
-            <div id="capacityManagementContainer">
-                </div>
-             </section>
+            <p>Defina quantos pets podem ser atendidos ao mesmo tempo para cada serviço em cada loja.</p>
+             <div id="loadingCapacity" class="text-center p-3"><span class="spinner-border text-primary"></span> Carregando regras...</div>
+             <div id="capacityManagementContainer"></div>
+         </section>
 
         <hr class="my-5">
 
@@ -87,11 +77,10 @@
              <p class="text-muted">(Funcionalidade a ser implementada)</p>
              <div class="card">
                  <div class="card-body text-center text-muted">
-                     Interface para definir os horários de abertura e fechamento de cada loja para cada dia da semana.
+                     Interface para definir os horários de abertura e fechamento de cada loja.
                  </div>
              </div>
-        </section>
-
+         </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -103,10 +92,9 @@
         const logoutButton = document.getElementById('logout-button');
         if(logoutButton) {
             logoutButton.addEventListener('click', async () => {
-                if(confirm('Tem certeza que deseja sair do painel de administração?')) {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) { alert('Erro ao sair: ' + error.message); }
-                    else { alert('Você saiu da sua conta de administrador.'); window.location.href = 'admin_login.html'; }
+                if(confirm('Tem certeza que deseja sair?')) {
+                    await supabase.auth.signOut();
+                    window.location.href = '../usuario/login.html'; 
                 }
             });
         }
