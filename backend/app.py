@@ -12,8 +12,8 @@ import traceback
 load_dotenv()
 
 # --- 2. CONFIGURAÇÃO DO CLIENTE SUPABASE ---
-url: str = os.getenv("SUPABASE_URL")
-key: str = os.getenv("SUPABASE_KEY")  # Use sempre a Service Role Key!
+url: str = os.getenv("https://lslnyyfpwxhwsesnihfj.supabase.co")
+key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI")  # Use sempre a Service Role Key!
 
 supabase: Client = None
 if not url or not key:
