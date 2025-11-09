@@ -73,3 +73,22 @@ body {
     justify-content: center;
     margin-right: 5px;
 }
+
+/* ================================================ */
+/* NOVO: Animação para novos agendamentos em tempo real */
+/* ================================================ */
+@keyframes highlight-new-row {
+  from {
+    background-color: #d1f7d1; /* Verde claro */
+    opacity: 1;
+  }
+  to {
+    background-color: transparent;
+    opacity: 1;
+  }
+}
+
+.new-appointment-highlight {
+  /* Aplica a animação: nome, duração, tipo */
+  animation: highlight-new-row 3s ease-out;
+}

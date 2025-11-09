@@ -1,12 +1,12 @@
 // js/admin_horarios.js
-// VERSÃO REESCRITA: Segurança desativado e import corrigido
+// VERSÃO ATUALIZADA: Funcionalidade de Horário de Funcionamento Padrão adicionada
+// Segurança continua DESATIVADO (para seu teste de login)
 
 // CORRIGIDO: O caminho deve ser './'
 import { supabase } from './supabaseClient.js';
-// DESATIVADO:
-// import { checkAdminAuth } from './admin_auth.js'; // IMPORTA O SEGURANÇA
+// DESATIVADO: import { checkAdminAuth } from './admin_auth.js'; // IMPORTA O SEGURANÇA
 
-// --- ELEMENTOS DO DOM ---
+// --- ELEMENTOS DO DOM (Antigos) ---
 const blockDayForm = document.getElementById('blockDayForm');
 const capacityManagementContainer = document.getElementById('capacityManagementContainer');
 const storesSelectBlockDay = document.getElementById('block-store');
@@ -14,10 +14,22 @@ const blockedDaysList = document.getElementById('blockedDaysList');
 const loadingCapacity = document.getElementById('loadingCapacity');
 const loadingBlockedDays = document.getElementById('loadingBlockedDays');
 
+// --- NOVO: ELEMENTOS DO DOM (Horário Padrão) ---
+const lojaSelectHorarios = document.getElementById('loja-select-horarios');
+const horariosFormContainer = document.getElementById('horarios-form-container');
+const horariosForm = document.getElementById('horariosForm');
+const horariosTbody = horariosForm.querySelector('tbody');
+const lojaSelecionadaNome = document.getElementById('loja-selecionada-nome');
+const saveHorariosButton = document.getElementById('saveHorariosButton');
+const loadingHorariosSpinner = document.getElementById('loading-horarios-spinner');
+const diasDaSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+
 let storesData = [];
 let servicesData = []; 
+let currentLojaIdHorarios = null;
 
-// --- FUNÇÕES AUXILIARES ---
+
+// --- FUNÇÕES AUXILIARES (Antigas) ---
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     try {
@@ -29,7 +41,7 @@ function formatDate(dateString) {
     }
 }
 
-// --- LÓGICA DE BLOQUEIO ---
+// --- LÓGICA DE BLOQUEIO (Antiga) ---
 async function loadBlockedDays() {
     if (!blockedDaysList || !loadingBlockedDays) return;
     loadingBlockedDays.style.display = 'block';
@@ -65,7 +77,6 @@ async function loadBlockedDays() {
         blockedDaysList.innerHTML = '<li class="list-group-item text-danger">Erro ao carregar bloqueios.</li>';
     }
 }
-
 async function blockDay(event) {
     event.preventDefault();
     const dateInput = document.getElementById('block-date');
@@ -95,7 +106,6 @@ async function blockDay(event) {
         button.textContent = 'Bloquear Dia';
     }
 }
-
 async function unblockDay(blockId) {
     if (confirm('Tem certeza que deseja desbloquear este dia?')) {
         try {
@@ -109,7 +119,7 @@ async function unblockDay(blockId) {
     }
 }
 
-// --- LÓGICA DE CAPACIDADE ---
+// --- LÓGICA DE CAPACIDADE (Antiga) ---
 async function loadCapacityRules() {
     if (!capacityManagementContainer || !loadingCapacity) return;
     loadingCapacity.style.display = 'block';
@@ -158,7 +168,6 @@ async function loadCapacityRules() {
         capacityManagementContainer.innerHTML = '<p class="text-danger">Erro ao carregar regras.</p>';
     }
 }
-
 async function saveCapacityChange(ruleId, newCapacity, newStatus) {
     const dataToUpdate = {};
     if (newCapacity !== null) { dataToUpdate.capacidade_simultanea = parseInt(newCapacity); }
@@ -185,27 +194,184 @@ async function saveCapacityChange(ruleId, newCapacity, newStatus) {
     }
 }
 
-// --- INICIALIZAÇÃO ---
+// --- ============================================= ---
+// --- NOVO: LÓGICA DO HORÁRIO DE FUNCIONAMENTO ---
+// --- ============================================= ---
+
+/** Popula a tabela de horários com os 7 dias da semana */
+function populateHorariosForm() {
+    horariosTbody.innerHTML = ''; // Limpa o formulário
+    for (let i = 0; i < 7; i++) { // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+        const dia = diasDaSemana[i];
+        const row = `
+            <tr id="dia-${i}">
+                <td class="fw-bold">${dia}</td>
+                <td class="text-center">
+                    <div class="form-check form-switch d-inline-block" style="padding-left: 3.5em;">
+                        <input class="form-check-input" type="checkbox" role="switch" id="ativo-${i}" data-dia="${i}">
+                        <label class="form-check-label" for="ativo-${i}" id="label-ativo-${i}">Fechado</label>
+                    </div>
+                </td>
+                <td><input type="time" class="form-control" id="abertura-${i}" data-dia="${i}" disabled></td>
+                <td><input type="time" class="form-control" id="fechamento-${i}" data-dia="${i}" disabled></td>
+                <td><input type="time" class="form-control" id="pausa-inicio-${i}" data-dia="${i}" disabled></td>
+                <td><input type="time" class="form-control" id="pausa-fim-${i}" data-dia="${i}" disabled></td>
+            </tr>
+        `;
+        horariosTbody.insertAdjacentHTML('beforeend', row);
+    }
+}
+
+/** Carrega os horários salvos no Supabase para a loja selecionada */
+async function loadHorarios(lojaId) {
+    currentLojaIdHorarios = lojaId;
+    loadingHorariosSpinner.style.display = 'block';
+    horariosFormContainer.style.display = 'block';
+    lojaSelecionadaNome.textContent = lojaSelectHorarios.options[lojaSelectHorarios.selectedIndex].text;
+    
+    // Popula o form com os 7 dias em branco
+    populateHorariosForm();
+
+    try {
+        const { data, error } = await supabase
+            .from('horarios_funcionamento')
+            .select('*')
+            .eq('id_loja', lojaId);
+
+        if (error) throw error;
+
+        // Preenche o formulário com os dados do banco
+        if (data && data.length > 0) {
+            data.forEach(horario => {
+                const i = horario.dia_semana;
+                const ativoCheckbox = document.getElementById(`ativo-${i}`);
+                
+                ativoCheckbox.checked = horario.ativo;
+                // '|| ""' evita que 'null' apareça escrito nos inputs
+                document.getElementById(`abertura-${i}`).value = horario.hora_abertura || "";
+                document.getElementById(`fechamento-${i}`).value = horario.hora_fechamento || "";
+                document.getElementById(`pausa-inicio-${i}`).value = horario.hora_inicio_pausa || "";
+                document.getElementById(`pausa-fim-${i}`).value = horario.hora_fim_pausa || "";
+                
+                // Dispara manualmente o evento para habilitar/desabilitar os campos
+                toggleDayInputs({ target: ativoCheckbox });
+            });
+        }
+    } catch (error) {
+        alert(`Erro ao carregar horários: ${error.message}`);
+    } finally {
+        loadingHorariosSpinner.style.display = 'none';
+    }
+}
+
+/** Salva os horários do formulário no Supabase (Usa Upsert) */
+async function saveHorarios(event) {
+    event.preventDefault();
+    if (!currentLojaIdHorarios) return;
+
+    saveHorariosButton.disabled = true;
+    saveHorariosButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
+
+    try {
+        const upsertData = [];
+        for (let i = 0; i < 7; i++) {
+            const ativo = document.getElementById(`ativo-${i}`).checked;
+            const abertura = document.getElementById(`abertura-${i}`).value || null;
+            const fechamento = document.getElementById(`fechamento-${i}`).value || null;
+            const pausa_inicio = document.getElementById(`pausa-inicio-${i}`).value || null;
+            const pausa_fim = document.getElementById(`pausa-fim-${i}`).value || null;
+
+            upsertData.push({
+                id_loja: currentLojaIdHorarios,
+                dia_semana: i,
+                ativo: ativo,
+                hora_abertura: ativo ? abertura : null,
+                hora_fechamento: ativo ? fechamento : null,
+                hora_inicio_pausa: ativo ? pausa_inicio : null,
+                hora_fim_pausa: ativo ? pausa_fim : null,
+            });
+        }
+
+        // Upsert: Insere se não existir, atualiza se já existir (baseado no onConflict)
+        const { error } = await supabase
+            .from('horarios_funcionamento')
+            .upsert(upsertData, { onConflict: 'id_loja, dia_semana' }); // Usa a chave única
+
+        if (error) throw error;
+
+        alert('Horários de funcionamento salvos com sucesso!');
+
+    } catch (error) {
+        alert(`Erro ao salvar horários: ${error.message}`);
+    } finally {
+        saveHorariosButton.disabled = false;
+        saveHorariosButton.textContent = 'Salvar Horários';
+    }
+}
+
+/** Habilita/desabilita os inputs de tempo baseado no checkbox "Ativo" */
+function toggleDayInputs(event) {
+    const checkbox = event.target;
+    const dia = checkbox.dataset.dia;
+    const inputs = [
+        document.getElementById(`abertura-${dia}`),
+        document.getElementById(`fechamento-${dia}`),
+        document.getElementById(`pausa-inicio-${dia}`),
+        document.getElementById(`pausa-fim-${dia}`)
+    ];
+    const label = document.getElementById(`label-ativo-${dia}`);
+
+    if (checkbox.checked) {
+        label.textContent = "Aberto";
+        label.classList.add('text-success');
+        inputs.forEach(input => input.disabled = false);
+    } else {
+        label.textContent = "Fechado";
+        label.classList.remove('text-success');
+        inputs.forEach(input => {
+            input.disabled = true;
+            input.value = ''; // Limpa os campos se estiver fechado
+        });
+    }
+}
+
+
+// --- INICIALIZAÇÃO (Modificada) ---
 async function loadInitialData() {
     try {
+        // Busca lojas (reutiliza para ambas as seções)
         const { data: stores, error: storesError } = await supabase.from('lojas').select('id_loja, nome_loja').order('nome_loja');
         if (storesError) throw storesError;
+        
         storesData = stores || [];
+        
+        // Popula o select de "Bloquear Dia"
         if (storesSelectBlockDay) {
             storesSelectBlockDay.innerHTML = '<option value="ALL">Todas as Lojas</option>'; 
             storesData.forEach(store => {
                 storesSelectBlockDay.innerHTML += `<option value="${store.id_loja}">${store.nome_loja}</option>`;
             });
         }
+
+        // NOVO: Popula o select de "Horário Padrão"
+        if (lojaSelectHorarios) {
+            lojaSelectHorarios.innerHTML = '<option value="" selected disabled>Selecione uma loja...</option>';
+            storesData.forEach(store => {
+                lojaSelectHorarios.innerHTML += `<option value="${store.id_loja}">${store.nome_loja}</option>`;
+            });
+        }
+
+        // Carrega as outras seções
         loadBlockedDays();
         loadCapacityRules();
+
     } catch (error) {
         alert("Erro ao carregar dados essenciais da página. Tente recarregar.");
     }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. "SEGURANÇA" DESATIVADO
+    // 1. "SEGURANÇA" DESATIVADO (como solicitado)
     // const adminUser = await checkAdminAuth();
     // if (!adminUser) return; // Para
 
@@ -213,10 +379,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("Admin (modo teste). Carregando dados de horários...");
     loadInitialData();
 
+    // --- Listeners da Seção "Bloquear Dia" (Antigo) ---
     if (blockDayForm) {
         blockDayForm.addEventListener('submit', blockDay);
     }
-
     if (blockedDaysList) {
         blockedDaysList.addEventListener('click', (event) => {
             const unblockButton = event.target.closest('.btn-unblock');
@@ -224,26 +390,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // --- Listeners da Seção "Capacidade" (Antigo) ---
     if (capacityManagementContainer) {
         capacityManagementContainer.addEventListener('input', (event) => {
             const target = event.target;
-            if (target.classList.contains('capacity-input') || target.classList.contains('status-switch')) {
-                const ruleId = target.dataset.ruleId;
-                const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
-                if (saveButton) saveButton.disabled = false;
+ 			if (target.classList.contains('capacity-input') || target.classList.contains('status-switch')) {
+ 				const ruleId = target.dataset.ruleId;
+ 				const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
+ 				if (saveButton) saveButton.disabled = false;
+ 			}
+        });
+         capacityManagementContainer.addEventListener('click', (event) => {
+            const saveButton = event.target.closest('.btn-save-capacity');
+ 			 if (saveButton && !saveButton.disabled) {
+ 				 const ruleId = saveButton.dataset.ruleId;
+ 				 const capacityInput = capacityManagementContainer.querySelector(`#capacity-${ruleId}`);
+ 				 const statusSwitch = capacityManagementContainer.querySelector(`#status-${ruleId}`);
+ 				 const newCapacity = capacityInput ? parseInt(capacityInput.value) : null;
+ 				 const newStatus = statusSwitch ? statusSwitch.checked : null;
+ 				 saveCapacityChange(ruleId, newCapacity, newStatus);
+ 			 }
+         });
+    }
+
+    // --- NOVO: Listeners da Seção "Horário Padrão" ---
+    if (lojaSelectHorarios) {
+        lojaSelectHorarios.addEventListener('change', (e) => {
+            const lojaId = e.target.value;
+            if (lojaId) {
+                loadHorarios(lojaId);
+            } else {
+                horariosFormContainer.style.display = 'none';
             }
         });
-
-         capacityManagementContainer.addEventListener('click', (event) => {
-             const saveButton = event.target.closest('.btn-save-capacity');
-             if (saveButton && !saveButton.disabled) {
-                 const ruleId = saveButton.dataset.ruleId;
-                 const capacityInput = capacityManagementContainer.querySelector(`#capacity-${ruleId}`);
-                 const statusSwitch = capacityManagementContainer.querySelector(`#status-${ruleId}`);
-                 const newCapacity = capacityInput ? parseInt(capacityInput.value) : null;
-                 const newStatus = statusSwitch ? statusSwitch.checked : null;
-                 saveCapacityChange(ruleId, newCapacity, newStatus);
-             }
-         });
+    }
+    if (horariosForm) {
+        horariosForm.addEventListener('submit', saveHorarios);
+        
+        // Adiciona listener para todos os checkboxes de "ativo"
+        // (Usando delegação de evento no formulário)
+        horariosForm.addEventListener('change', (e) => {
+            if (e.target.classList.contains('form-check-input')) {
+                toggleDayInputs(e);
+            }
+        });
     }
 });

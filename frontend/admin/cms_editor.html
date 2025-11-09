@@ -24,40 +24,84 @@
 
     <main class="admin-main-content">
         <h1>Editor Visual (CMS)</h1>
-        <p class="lead">Esta é uma representação de como o editor de conteúdo "arrastar e soltar" funcionaria.</p>
+        <p class="lead">Use os componentes para gerenciar o conteúdo do seu site.</p>
         
-        <div class="alert alert-info">
-            <strong>Funcionalidade a ser implementada:</strong> A tela abaixo seria uma visualização ao vivo do site.
-        </div>
-
         <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card">
-                    <div class="card-header">Componentes</div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Bloco de Texto</li>
-                        <li class="list-group-item">Imagem</li>
-                        <li class="list-group-item">Banner</li>
-                    </ul>
+                    <div class="card-header">Componentes Editáveis</div>
+                    <div class="list-group list-group-flush">
+                        <button type="button" class="list-group-item list-group-item-action" 
+                                data-bs-toggle="modal" data-bs-target="#editBannerModal" id="btn-edit-banner">
+                            <i class="bi bi-image-fill me-2"></i>Banner Principal
+                        </button>
+                        <a href="#" class="list-group-item list-group-item-action text-muted" aria-disabled="true" tabindex="-1">
+                            <i class="bi bi-fonts me-2"></i>Bloco de Texto (Em Breve)
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action text-muted" aria-disabled="true" tabindex="-1">
+                            <i class="bi bi-card-image me-2"></i>Imagem (Em Breve)
+                        </a>
+                    </div>
                 </div>
             </div>
+            
             <div class="col-md-9">
-                <div class="border p-3" style="height: 600px; background: #fff;">
-                    <p>Área de visualização do site (aqui entraria um `<iframe>`)</p>
+                <div class="border" style="height: 600px; overflow: hidden;">
+                    <iframe src="../home.html" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
             </div>
         </div>
     </main>
 
+    <div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="editBannerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBannerModalLabel">Editar Banner Principal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bannerEditForm">
+                        <div id="modal-loading-spinner" class="text-center p-4">
+                            <div class="spinner-border" role="status"></div>
+                            <p class="mt-2">Carregando conteúdo atual...</p>
+                        </div>
+
+                        <div id="modal-form-content" style="display: none;">
+                            <div class="mb-3">
+                                <label for="banner_img_url" class="form-label">URL da Imagem do Banner</label>
+                                <input type="url" class="form-control" id="banner_img_url" placeholder="https://.../imagem.png">
+                                <small class="text-muted">Cole a URL de uma imagem. (Para upload, precisaremos de Supabase Storage)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="banner_titulo" class="form-label">Título do Banner</label>
+                                <input type="text" class="form-control" id="banner_titulo" placeholder="Ex: AGENDAMENTO ONLINE">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveBannerButton">
+                        Salvar Alterações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/supabaseClient.js" type="module"></script>
     
+    <script src="../js/admin_cms.js" type="module"></script>
+
     <script type="module">
         import { supabase } from '../js/supabaseClient.js';
-        import { checkAdminAuth } from './admin_auth.js';
         
-        // Protege a página
-        checkAdminAuth(); 
+        // DESATIVADO PARA O MODO DE TESTE (para o atalho de login funcionar)
+        // import { checkAdminAuth } from './admin_auth.js';
+        // checkAdminAuth(); 
 
         // Lógica do botão Sair
         const logoutButton = document.getElementById('logout-button');

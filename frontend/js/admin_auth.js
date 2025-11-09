@@ -1,20 +1,15 @@
 // js/admin_auth.js
 // Este é o "Segurança" que vai proteger todas as suas páginas de admin.
 
-// CORRIGIDO: O caminho estava errado.
-import { supabase } from '../js/supabaseClient.js';
+// CORRIGIDO: O caminho deve ser './'
+import { supabase } from './supabaseClient.js';
 
-/**
- * Verifica se o usuário logado é um admin.
- * Se não for, ele expulsa o usuário para a tela de login.
- * @returns {object | null} Retorna o objeto do usuário se for admin, ou nulo se não for.
- */
 export async function checkAdminAuth() {
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError) {
         console.error('Erro ao pegar sessão:', sessionError);
-        window.location.href = '../usuario/login.html'; // Expulsa para o login unificado
+        window.location.href = '../usuario/login.html';
         return null;
     }
 
@@ -26,6 +21,7 @@ export async function checkAdminAuth() {
 
     const userId = session.user.id;
 
+    // Busca o perfil para verificar o 'role'
     const { data: perfil, error: perfilError } = await supabase
         .from('perfis')
         .select('role')
@@ -41,9 +37,11 @@ export async function checkAdminAuth() {
     }
 
     if (perfil && perfil.role === 'admin') {
+        // SUCESSO! É um admin.
         console.log('Acesso de admin verificado.');
-        return session.user; // Sucesso!
+        return session.user; 
     } else {
+        // NÃO É ADMIN! Expulsa.
         console.warn('Acesso negado: Usuário não é admin.');
         alert('Acesso negado. Esta área é restrita para administradores.');
         await supabase.auth.signOut();
