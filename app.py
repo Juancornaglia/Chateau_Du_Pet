@@ -53,6 +53,7 @@ def imagens(filename):
 def videos(filename):
     return redirect(url_for('static', filename=f'videos/{filename}'))
 
+@app.route('/')
 @app.route('/home')
 def home():
     return render_template('home.html')
