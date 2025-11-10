@@ -12,15 +12,17 @@ import traceback
 load_dotenv()
 
 # --- 2. CONFIGURAÇÃO DO CLIENTE SUPABASE ---
+# As variáveis de ambiente deveriam ser carregadas, mas estão sendo sobrescritas
 url: str = os.getenv("https://lslnyyfpwxhwsesnihfj.supabase.co")
-key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI")  # Use sempre a Service Role Key!
+key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI") 
 
+# Valores hardcoded (como no seu exemplo)
 url = "https://lslnyyfpwxhwsesnihfj.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI"
 
 supabase: Client = None
 if not url or not key:
-    print("ERRO CRÍTICO: Variáveis SUPABASE_URL e SUPABASE_KEY não definidas no .env")
+    print("ERRO CRÍTICO: Variáveis SUPABASE_URL e SUPABASE_KEY não definidas.")
 else:
     try:
         supabase = create_client(url, key)
@@ -34,7 +36,15 @@ HORA_FIM_PADRAO = time(18, 0)
 INTERVALO_SLOT_MINUTOS = 30  # Granularidade dos horários
 
 # --- 4. CONFIGURAÇÃO DO FLASK E CORS ---
-app = Flask(__name__)
+# Assumindo que os templates estão na pasta 'frontend' no nível acima
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+# Assumindo que os arquivos estáticos (css, js, img) estão em 'frontend/static'
+static_dir = os.path.join(template_dir, 'static')
+
+# Se 'static' não for a pasta, ajuste 'static_folder'
+# Se seus templates estão em 'backend/templates', use: app = Flask(__name__)
+app = Flask(__name__, template_folder=template_dir, static_folder=template_dir)
+
 
 # Permitir chamadas do Netlify (produção) e de testes locais
 origins = [
@@ -45,26 +55,141 @@ origins = [
 
 CORS(app, origins=origins, methods=["GET", "POST", "OPTIONS"])
 
+# --- ROTAS ESTÁTICAS (CSS, JS, Imagens) ---
+# O Flask pode servir estáticos automaticamente se estiverem em /static
+# Mas mantendo suas rotas de redirecionamento:
+
 @app.route('/img/<path:filename>')
 def imagens(filename):
+    # Redireciona para /static/img/filename
+    # Verifique se seus arquivos de imagem estão em 'frontend/img' ou 'frontend/static/img'
+    # Se estiver em 'frontend/img', o static_url_path precisa ser ajustado
     return redirect(url_for('static', filename=f'img/{filename}'))
 
 @app.route('/videos/<path:filename>')
 def videos(filename):
     return redirect(url_for('static', filename=f'videos/{filename}'))
 
+# --- ROTAS HTML (PÁGINAS) ---
+
 @app.route('/')
+def index():
+    """Rota raiz que redireciona para a home."""
+    return redirect(url_for('home'))
+
 @app.route('/home')
 def home():
+    """Rota existente: Home"""
     return render_template('home.html')
-
-@app.route('/usuario/login')
-def login():
-    return render_template('/usuario/login.html')
 
 @app.route('/produto')
 def produto():
+    """Rota existente: Produto (singular)"""
     return render_template('produto.html')
+
+# --- NOVAS ROTAS HTML ADICIONADAS ---
+
+# Páginas Raiz
+@app.route('/busca')
+def busca():
+    return render_template('busca.html')
+
+@app.route('/produto-detalhe')
+def produto_detalhe():
+    return render_template('produto_detalhe.html')
+
+@app.route('/produtos')
+def produtos():
+    """Rota para 'produtos.html' (plural)"""
+    return render_template('produtos.html')
+
+# Páginas Admin
+@app.route('/admin/cms-editor')
+def admin_cms_editor():
+    return render_template('admin/cms_editor.html')
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    return render_template('admin/dashboard.html')
+
+@app.route('/admin/gestao-agendamentos')
+def admin_gestao_agendamentos():
+    return render_template('admin/gestao_agendamentos.html')
+
+@app.route('/admin/gestao-horarios')
+def admin_gestao_horarios():
+    return render_template('admin/gestao_horarios.html')
+
+@app.route('/admin/gestao-produtos')
+def admin_gestao_produtos():
+    return render_template('admin/gestao_produtos.html')
+
+# Páginas Institucionais
+@app.route('/institucional/avaliacoes')
+def institucional_avaliacoes():
+    return render_template('paginas_institucionais/avaliacoes.html')
+
+@app.route('/institucional/contatos')
+def institucional_contatos():
+    return render_template('paginas_institucionais/contatos.html')
+
+@app.route('/institucional/lojas')
+def institucional_lojas():
+    return render_template('paginas_institucionais/lojas.html')
+
+@app.route('/institucional/sobre')
+def institucional_sobre():
+    return render_template('paginas_institucionais/sobre.html')
+
+# Páginas de Serviços
+@app.route('/servicos/agendamento-fluxo')
+def servicos_agendamento_fluxo():
+    return render_template('servicos/agendamento-fluxo.html')
+
+@app.route('/servicos/day-care')
+def servicos_day_care():
+    return render_template('servicos/day_care.html')
+
+@app.route('/servicos/hotel')
+def servicos_hotel():
+    return render_template('servicos/hotel.html')
+
+@app.route('/servicos')
+def servicos():
+    return render_template('servicos/servicos.html')
+
+@app.route('/servicos/veterinaria')
+def servicos_veterinaria():
+    return render_template('servicos/veterinaria.html')
+
+# Páginas de Usuário
+@app.route('/usuario/criar-conta')
+def usuario_criar_conta():
+    return render_template('usuario/criar_conta.html')
+
+@app.route('/usuario/favorito')
+def usuario_favorito():
+    return render_template('usuario/favorito.html')
+
+@app.route('/usuario/login')
+def usuario_login():
+    return render_template('usuario/login.html')
+
+@app.route('/usuario/meus-agendamentos')
+def usuario_meus_agendamentos():
+    return render_template('usuario/meus_agendamentos.html')
+
+@app.route('/usuario/meus-pets')
+def usuario_meus_pets():
+    return render_template('usuario/meus_pets.html')
+
+@app.route('/usuario/perfil')
+def usuario_perfil():
+    return render_template('usuario/perfil.html')
+
+@app.route('/usuario/redefinir-senha')
+def usuario_redefinir_senha():
+    return render_template('usuario/redefinir_senha.html')
 
 # --- 5. ROTA DE TESTE (Health Check) ---
 @app.route('/api/', methods=['GET'])
@@ -315,4 +440,5 @@ def get_recomendados():
 # --- 9. EXECUÇÃO LOCAL ---
 if __name__ == '__main__':
     # O Render usará Gunicorn, mas deixamos para execução local
-    app.run(debug=False)
+    # debug=True é útil para desenvolvimento
+    app.run(debug=True, port=5000)
