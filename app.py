@@ -1,7 +1,7 @@
 # backend/app.py — Versão Final Unificada (Agendamento + E-commerce + CORS Ajustado)
 
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_cors import CORS
 from dotenv import load_dotenv
 from supabase import create_client, Client
@@ -14,6 +14,9 @@ load_dotenv()
 # --- 2. CONFIGURAÇÃO DO CLIENTE SUPABASE ---
 url: str = os.getenv("https://lslnyyfpwxhwsesnihfj.supabase.co")
 key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI")  # Use sempre a Service Role Key!
+
+url = "https://lslnyyfpwxhwsesnihfj.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI"
 
 supabase: Client = None
 if not url or not key:
@@ -41,6 +44,26 @@ origins = [
 ]
 
 CORS(app, origins=origins, methods=["GET", "POST", "OPTIONS"])
+
+@app.route('/img/<path:filename>')
+def imagens(filename):
+    return redirect(url_for('static', filename=f'img/{filename}'))
+
+@app.route('/videos/<path:filename>')
+def videos(filename):
+    return redirect(url_for('static', filename=f'videos/{filename}'))
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+@app.route('/usuario/login')
+def login():
+    return render_template('/usuario/login.html')
+
+@app.route('/produto')
+def produto():
+    return render_template('produto.html')
 
 # --- 5. ROTA DE TESTE (Health Check) ---
 @app.route('/api/', methods=['GET'])
