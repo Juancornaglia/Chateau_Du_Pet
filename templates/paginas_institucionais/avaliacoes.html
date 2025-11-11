@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avaliações dos Clientes - Chateau du Pet</title>
-    <link rel="icon" type="image/png" href="../img/logo_pequena.png">
+    
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_pequena.png') }}">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
@@ -115,11 +117,11 @@
 <body>
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container">
-             <a class="btn text-white d-flex align-items-center" href="../home.html" style="text-decoration: none;">
+             <a class="btn text-white d-flex align-items-center" href="{{ url_for('home') }}" style="text-decoration: none;">
                  <i class="bi bi-arrow-left me-2"></i>
                  <span class="d-none d-sm-inline">Voltar</span>
              </a>
-             <a class="navbar-brand fw-bold text-white mx-auto" href="../home.html">
+             <a class="navbar-brand fw-bold text-white mx-auto" href="{{ url_for('home') }}">
                  <span class="d-none d-md-inline">AVALIAÇÕES DE CLIENTES</span>
                  <span class="d-md-none">Avaliações</span>
              </a>
@@ -134,7 +136,7 @@
                 <div class="review-card">
                     <p>"O lugar é muito bonito e gostoso, vale a pena dar uma volta com o seu pet. São vários ambientes e várias opções de atendimento para o seu filho de 4 patas."</p>
                     <div class="review-author">
-                        <img src="../img/animal1.webp" alt="Avatar Cliente Valéria">
+                        <img src="{{ url_for('static', filename='img/animal1.webp') }}" alt="Avatar Cliente Valéria">
                         <div>
                             <div class="name">Valéria Ferreira</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -144,7 +146,7 @@
                 <div class="review-card">
                     <p>"Lugar fantástico, espaçoso, agradável atendimento 5 estrelas... Meu pet feliz e eu satisfeito."</p>
                     <div class="review-author">
-                        <img src="../img/animal2.webp" alt="Avatar Cliente Paulo">
+                        <img src="{{ url_for('static', filename='img/animal2.webp') }}" alt="Avatar Cliente Paulo">
                         <div>
                             <div class="name">Paulo R. do C. Santos</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -157,7 +159,7 @@
                 <div class="review-card">
                     <p>"Excelente lugar para você que ama seu Pet. Vale a pena conhecer, tanto serviços quanto atendimentos são ótimos. Parabéns a todos envolvidos!"</p>
                     <div class="review-author">
-                        <img src="../img/animal3.webp" alt="Avatar Cliente Daniels">
+                        <img src="{{ url_for('static', filename='img/animal3.webp') }}" alt="Avatar Cliente Daniels">
                         <div>
                             <div class="name">Daniels Souza</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -167,7 +169,7 @@
                 <div class="review-card">
                     <p>"Melhor Pet que já fui. Nunca tinha conhecido nada com tanta estrutura. Superdiferenciado o espaço, profissionais supercapacitados."</p>
                     <div class="review-author">
-                        <img src="../img/animal4.webp" alt="Avatar Cliente Beatriz">
+                        <img src="{{ url_for('static', filename='img/animal4.webp') }}" alt="Avatar Cliente Beatriz">
                         <div>
                             <div class="name">Beatriz Macieira</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -180,7 +182,7 @@
                 <div class="review-card">
                     <p>"Deixo meu Tobby no Day Care toda semana. Ele volta exausto e feliz! A equipe é incrível e manda fotos o dia todo. Confiança total."</p>
                     <div class="review-author">
-                        <img src="../img/animal5.webp" alt="Avatar Cliente Carla">
+                        <img src="{{ url_for('static', filename='img/animal5.webp') }}" alt="Avatar Cliente Carla">
                         <div>
                             <div class="name">Carla Mendes (e Tobby)</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -192,7 +194,7 @@
                 <div class="review-card">
                     <p>"Tive uma emergência com a minha gatinha e a Dra. foi super atenciosa. Cuidaram dela com muito carinho e profissionalismo. Recomendo a clínica!"</p>
                     <div class="review-author">
-                        <img src="../img/animal6.webp" alt="Avatar Cliente Ricardo">
+                        <img src="{{ url_for('static', filename='img/animal6.webp') }}" alt="Avatar Cliente Ricardo">
                         <div>
                             <div class="name">Ricardo Alves</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
@@ -205,7 +207,7 @@
                 <div class="review-card">
                     <p>"Minha cachorrinha sempre volta impecável do banho e tosa. Os profissionais são muito pacientes e o cheirinho dura muito tempo!"</p>
                     <div class="review-author">
-                        <img src="../img/animal7.webp" alt="Avatar Cliente Juliana"> <div>
+                        <img src="{{ url_for('static', filename='img/animal7.webp') }}" alt="Avatar Cliente Juliana"> <div>
                             <div class="name">Juliana Costa</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
                         </div>
@@ -217,7 +219,7 @@
                 <div class="review-card">
                     <p>"O hotel pet é a salvação nas minhas viagens. Meu gato fica super à vontade e eu recebo atualizações constantes. Paz de espírito!"</p>
                     <div class="review-author">
-                        <img src="../img/animal8.webp" alt="Avatar Cliente Fernando"> <div>
+                        <img src="{{ url_for('static', filename='img/animal8.webp') }}" alt="Avatar Cliente Fernando"> <div>
                             <div class="name">Fernando Guedes</div>
                             <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
                         </div>
@@ -238,25 +240,28 @@
         <div class="container my-5">
             <h2 class="text-center main-purple-text fw-bold mb-4">Momentos Reais de Nossos Clientes</h2>
             <div class="row g-3">
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/veteri_1.webp" alt="Atendimento veterinário" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/day_care1.webp" alt="Pets no Day Care" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/veteri_2.webp" alt="Cuidado na clínica" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/day_care2.webp" alt="Pets brincando" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/veteri_3.webp" alt="Consulta veterinária" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/veteri_4.webp" alt="Banho e Tosa" class="friend-gallery-img"></div> <div class="col-lg-3 col-md-4 col-6"><img src="../img/hotel1.webp" alt="Hotel Pet" class="friend-gallery-img"></div> <div class="col-lg-3 col-md-4 col-6"><img src="../img/hotel2.webp" alt="Hotel Pet" class="friend-gallery-img"></div> </div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/veteri_1.webp') }}" alt="Atendimento veterinário" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/day_care1.webp') }}" alt="Pets no Day Care" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/veteri_2.webp') }}" alt="Cuidado na clínica" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/day_care2.webp') }}" alt="Pets brincando" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/veteri_3.webp') }}" alt="Consulta veterinária" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/veteri_4.webp') }}" alt="Banho e Tosa" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/hotel1.webp') }}" alt="Hotel Pet" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/hotel2.webp') }}" alt="Hotel Pet" class="friend-gallery-img"></div>
+            </div>
         </div>
 
         <div class="container my-5">
             <h2 class="text-center main-purple-text fw-bold mb-4">Galeria: Nossos Amigos</h2>
             <div class="row g-3">
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal1.webp" alt="Cliente pet 1" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal2.webp" alt="Cliente pet 2" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal3.webp" alt="Cliente pet 3" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal4.webp" alt="Cliente pet 4" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal5.webp" alt="Cliente pet 5" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal6.webp" alt="Cliente pet 6" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal7.webp" alt="Cliente pet 7" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal8.webp" alt="Cliente pet 8" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal1.webp') }}" alt="Cliente pet 1" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal2.webp') }}" alt="Cliente pet 2" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal3.webp') }}" alt="Cliente pet 3" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal4.webp') }}" alt="Cliente pet 4" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal5.webp') }}" alt="Cliente pet 5" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal6.webp') }}" alt="Cliente pet 6" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal7.webp') }}" alt="Cliente pet 7" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal8.webp') }}" alt="Cliente pet 8" class="friend-gallery-img"></div>
                 </div>
         </div>
     </main>
@@ -264,10 +269,15 @@
     <footer class="main-footer pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row footer-links mb-4">
-                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="contatos.html" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="contatos.html">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled"><li><a href="../servicos/veterinaria.html">Veterinária 🐾</a></li><li><a href="../servicos/servicos.html">Estética</a></li><li><a href="../servicos/hotel.html">Hotel Pet</a></li><li><a href="../servicos/day_care.html">Day Care</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="lojas.html">Nossas Lojas</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="{{ url_for('institucional_contatos') }}" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="{{ url_for('institucional_contatos') }}">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled">
+                    <li><a href="{{ url_for('servicos_veterinaria') }}">Veterinária 🐾</a></li>
+                    <li><a href="{{ url_for('servicos') }}">Estética</a></li>
+                    <li><a href="{{ url_for('servicos_hotel') }}">Hotel Pet</a></li>
+                    <li><a href="{{ url_for('servicos_day_care') }}">Day Care</a></li>
+                </ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="{{ url_for('institucional_lojas') }}">Nossas Lojas</a></li></ul></div>
             </div>
             <hr class="footer-hr">
             <div class="text-center mt-3 small text-muted">

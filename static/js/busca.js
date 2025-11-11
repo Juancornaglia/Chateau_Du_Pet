@@ -1,6 +1,5 @@
-// js/busca.js (Versão Final e Corrigida)
+// static/js/busca.js (VERSÃO CORRETA - SEM MUDANÇAS)
 
-// CAMINHO CORRIGIDO (./ significa "na mesma pasta")
 import { supabase } from './supabaseClient.js';
 
 // --- ELEMENTOS DO DOM (Apenas os que existem nesta página) ---
@@ -57,9 +56,20 @@ function formatPrice(price) {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); 
 }
 
+/**
+ * ==========================================================================
+ * FUNÇÃO DO CARD MODIFICADA PARA USAR OS ATRIBUTOS DO FLASK
+ * ==========================================================================
+ */
 function createProductCard(produto) { 
     if (!produto || typeof produto.id_produto === 'undefined') { return ''; }
     
+    // 1. Lê os caminhos base que o Flask colocou no HTML
+    const container = document.getElementById('search-results-container');
+    const baseProductLink = container.dataset.productLink || 'produto_detalhe'; // Fallback
+    const baseStaticImgPath = container.dataset.staticImgPath || '/static/img/'; // Fallback
+    const placeholderImg = container.dataset.placeholderImg || (baseStaticImgPath + 'placeholder.png'); // Fallback
+
     const originalPrice = produto.preco;
     const promoPrice = produto.preco_promocional;
     const isPromo = promoPrice && promoPrice < originalPrice;
@@ -69,14 +79,17 @@ function createProductCard(produto) {
     const isFavorite = favorites.includes(parseInt(produto.id_produto, 10));
     const heartIconClass = isFavorite ? 'bi-heart-fill' : 'bi-heart';
     
-    // Caminho relativo ao root (onde busca.html está)
-    const productLink = `produto.html?id=${produto.id_produto}`;
+    // 2. Constrói o link do produto usando o caminho base
+    const productLink = `${baseProductLink}?id=${produto.id_produto}`;
     
+    // 3. Constrói o link da imagem usando o caminho base
     let imageUrl = produto.url_imagem;
     if (imageUrl && !imageUrl.startsWith('http')) {
-        imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`; 
+        imageUrl = `${baseStaticImgPath}${produto.url_imagem}`; 
     }
-    if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'img/placeholder.png'; }
+    if (!imageUrl || imageUrl.trim() === "" || imageUrl.endsWith('null')) { 
+        imageUrl = placeholderImg; 
+    }
     
     return `
         <div class="card h-100 product-card shadow-sm position-relative">
@@ -173,19 +186,12 @@ async function performSearch() {
     
     let query = supabase.from('produtos').select('*');
     
-    // =================================================================
-    // CORREÇÃO DA BUSCA (IGNORAR ACENTOS)
-    // =================================================================
     if (searchTerm) {
-        // 1. Prepara o termo de busca: 'racao barata' vira "racao:*" E "barata:*"
-        // Isso ignora acentos E faz busca por prefixo (ex: "rac" acha "ração")
         const formattedSearchTerm = searchTerm.trim().split(/\s+/)
             .filter(Boolean)
             .map(t => `${t}:*`)
             .join(' & ');
 
-        // 2. Substitui o .ilike() por .or() com .textSearch() (ou .fts())
-        // O 'portuguese' é o que faz a mágica de ignorar acentos.
         query = query.or(
             `nome_produto.fts(portuguese).${formattedSearchTerm},` +
             `descricao.fts(portuguese).${formattedSearchTerm},` +
@@ -193,7 +199,6 @@ async function performSearch() {
             `tipo_produto.fts(portuguese).${formattedSearchTerm}`
         );
     }
-    // =================================================================
     
     if (currentActiveFilters.tipo_produto.length > 0) {
         query = query.in('tipo_produto', currentActiveFilters.tipo_produto);

@@ -85,59 +85,59 @@ async function loadAndDisplayProducts() {
 }
 async function fetchProductDetails(productId) {
     try {
- 		let { data: produto, error } = await supabase
- 			.from('produtos')
- 			.select('*')
- 			.eq('id_produto', productId)
- 			.single(); 
- 		if (error) { throw error; }
- 		return produto; 
- 	} catch (error) {
- 		alert(`Não foi possível carregar os dados do produto. ${error.message}`);
- 		return null; 
- 	}
+        let { data: produto, error } = await supabase
+            .from('produtos')
+            .select('*')
+            .eq('id_produto', productId)
+            .single(); 
+        if (error) { throw error; }
+        return produto; 
+    } catch (error) {
+        alert(`Não foi possível carregar os dados do produto. ${error.message}`);
+        return null; 
+    }
 }
 async function addProduct(productData) {
     try {
- 		let { data: maxIdData, error: maxIdError } = await supabase
- 			.from('produtos')
- 			.select('id_produto')
- 			.order('id_produto', { descending: true })
- 			.limit(1)
- 			.single();
- 		if (maxIdError && maxIdError.code !== 'PGRST116') { throw new Error('Erro ao buscar último ID: ' + maxIdError.message); }
- 		const nextId = maxIdData ? maxIdData.id_produto + 1 : 1;
- 		productData.id_produto = nextId; 
- 		const { data, error } = await supabase.from('produtos').insert([productData]).select(); 
- 		if (error) { throw error; }
- 		alert('Produto adicionado com sucesso!');
- 		return true; 
- 	} catch (error) {
- 		alert(`Erro ao adicionar produto: ${error.message}`);
- 		return false; 
- 	}
+        let { data: maxIdData, error: maxIdError } = await supabase
+            .from('produtos')
+            .select('id_produto')
+            .order('id_produto', { descending: true })
+            .limit(1)
+            .single();
+        if (maxIdError && maxIdError.code !== 'PGRST116') { throw new Error('Erro ao buscar último ID: ' + maxIdError.message); }
+        const nextId = maxIdData ? maxIdData.id_produto + 1 : 1;
+        productData.id_produto = nextId; 
+        const { data, error } = await supabase.from('produtos').insert([productData]).select(); 
+        if (error) { throw error; }
+        alert('Produto adicionado com sucesso!');
+        return true; 
+    } catch (error) {
+        alert(`Erro ao adicionar produto: ${error.message}`);
+        return false; 
+    }
 }
 async function updateProduct(productId, productData) {
     try {
- 		const { data, error } = await supabase.from('produtos').update(productData).eq('id_produto', productId).select(); 
- 		if (error) { throw error; }
- 		alert('Produto atualizado com sucesso!');
- 		return true; 
- 	} catch (error) {
- 		alert(`Erro ao atualizar produto: ${error.message}`);
- 		return false; 
- 	}
+        const { data, error } = await supabase.from('produtos').update(productData).eq('id_produto', productId).select(); 
+        if (error) { throw error; }
+        alert('Produto atualizado com sucesso!');
+        return true; 
+    } catch (error) {
+        alert(`Erro ao atualizar produto: ${error.message}`);
+        return false; 
+    }
 }
 async function deleteProduct(productId) {
     try {
- 		const { error } = await supabase.from('produtos').delete().eq('id_produto', productId); 
- 		if (error) { throw error; }
- 		alert('Produto excluído com sucesso!');
- 		return true; 
- 	} catch (error) {
- 		alert(`Erro ao excluir produto: ${error.message}`);
- 		return false; 
- 	}
+        const { error } = await supabase.from('produtos').delete().eq('id_produto', productId); 
+        if (error) { throw error; }
+        alert('Produto excluído com sucesso!');
+        return true; 
+    } catch (error) {
+        alert(`Erro ao excluir produto: ${error.message}`);
+        return false; 
+    }
 }
 
 // --- NOVO: Função para "escutar" o banco de dados ---
@@ -207,73 +207,73 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadAndDisplayProducts();
 
     // 3. ADICIONA OS LISTENERS
- 	if (addProductButton) {
- 		addProductButton.addEventListener('click', () => {
- 			clearProductForm(); 
- 		});
- 	}
- 	document.addEventListener('click', async (event) => {
- 		const target = event.target;
- 		const editButton = target.closest('.btn-edit');
- 		const deleteButton = target.closest('.btn-delete');
- 		if (editButton) {
- 			const productId = editButton.dataset.id;
- 			clearProductForm(); 
- 			const productData = await fetchProductDetails(productId); 
- 			if (productData) { populateProductForm(productData); }
- 			return; 
- 		}
- 		if (deleteButton) {
- 			const productId = deleteButton.dataset.id;
- 			const productName = deleteButton.closest('tr').querySelector('td:nth-child(2)').textContent; 
- 			if (confirm(`Tem certeza que deseja EXCLUIR o produto "${productName}" (ID: ${productId})?`)) {
- 				const success = await deleteProduct(productId); 
- 				// Não precisa mais recarregar, o Realtime vai fazer isso
- 			}
- 			return;
- 		}
- 	});
- 	if (productForm) {
- 		productForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); 
- 			saveProductButton.disabled = true; 
- 			const productData = {
- 				nome_produto: document.getElementById('nome_produto').value.trim(),
- 				preco: parseFloat(document.getElementById('preco').value) || null,
- 				quantidade_estoque: parseInt(document.getElementById('quantidade_estoque').value) || 0,
- 				url_imagem: document.getElementById('url_imagem').value.trim() || null,
- 				descricao: document.getElementById('descricao').value.trim() || null,
- 				marca: document.getElementById('marca').value.trim() || null,
- 				tipo_produto: document.getElementById('tipo_produto').value.trim() || null,
- 			};
- 			if (!productData.nome_produto || productData.preco === null || productData.quantidade_estoque === null) {
- 				 alert('Por favor, preencha todos os campos obrigatórios (*).');
- 				 saveProductButton.disabled = false;
- 				 return;
- 			}
- 			const editingId = editProductIdInput.value; 
- 			let success = false;
- 			if (editingId) {
- 				saveProductButton.textContent = 'Salvando Alterações...';
- 				success = await updateProduct(editingId, productData);
- 			} else {
- 				saveProductButton.textContent = 'Adicionando Produto...';
- 				success = await addProduct(productData);
- 			}
- 			if (success) {
- 				productModalInstance.hide(); 
- 				// Não precisa mais recarregar, o Realtime vai fazer isso
- 			} else {
- 				saveProductButton.disabled = false;
- 				saveProductButton.textContent = editingId ? 'Salvar Alterações' : 'Salvar Produto';
- 			}
+    if (addProductButton) {
+        addProductButton.addEventListener('click', () => {
+            clearProductForm(); 
         });
- 	}
- 	if (productModalElement) {
- 		productModalElement.addEventListener('hidden.bs.modal', () => {
- 			clearProductForm();
- 		});
- 	}
+    }
+    document.addEventListener('click', async (event) => {
+        const target = event.target;
+        const editButton = target.closest('.btn-edit');
+        const deleteButton = target.closest('.btn-delete');
+        if (editButton) {
+            const productId = editButton.dataset.id;
+            clearProductForm(); 
+            const productData = await fetchProductDetails(productId); 
+            if (productData) { populateProductForm(productData); }
+            return; 
+        }
+        if (deleteButton) {
+            const productId = deleteButton.dataset.id;
+            const productName = deleteButton.closest('tr').querySelector('td:nth-child(2)').textContent; 
+            if (confirm(`Tem certeza que deseja EXCLUIR o produto "${productName}" (ID: ${productId})?`)) {
+                const success = await deleteProduct(productId); 
+                // Não precisa mais recarregar, o Realtime vai fazer isso
+            }
+            return;
+        }
+    });
+    if (productForm) {
+        productForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+            saveProductButton.disabled = true; 
+            const productData = {
+                nome_produto: document.getElementById('nome_produto').value.trim(),
+                preco: parseFloat(document.getElementById('preco').value) || null,
+                quantidade_estoque: parseInt(document.getElementById('quantidade_estoque').value) || 0,
+                url_imagem: document.getElementById('url_imagem').value.trim() || null,
+                descricao: document.getElementById('descricao').value.trim() || null,
+                marca: document.getElementById('marca').value.trim() || null,
+                tipo_produto: document.getElementById('tipo_produto').value.trim() || null,
+            };
+            if (!productData.nome_produto || productData.preco === null || productData.quantidade_estoque === null) {
+                 alert('Por favor, preencha todos os campos obrigatórios (*).');
+                 saveProductButton.disabled = false;
+                 return;
+            }
+            const editingId = editProductIdInput.value; 
+            let success = false;
+            if (editingId) {
+                saveProductButton.textContent = 'Salvando Alterações...';
+                success = await updateProduct(editingId, productData);
+            } else {
+                saveProductButton.textContent = 'Adicionando Produto...';
+                success = await addProduct(productData);
+            }
+            if (success) {
+                productModalInstance.hide(); 
+                // Não precisa mais recarregar, o Realtime vai fazer isso
+            } else {
+                saveProductButton.disabled = false;
+                saveProductButton.textContent = editingId ? 'Salvar Alterações' : 'Salvar Produto';
+            }
+        });
+    }
+    if (productModalElement) {
+        productModalElement.addEventListener('hidden.bs.modal', () => {
+            clearProductForm();
+        });
+    }
 
     // 4. NOVO: Inicia o "ouvinte" de Realtime
     listenForProductChanges();

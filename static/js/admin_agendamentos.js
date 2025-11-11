@@ -83,53 +83,53 @@ async function loadAndDisplayAppointments() {
 // --- FUNÇÕES PARA AÇÕES ---
 async function showAppointmentDetails(appointmentId) {
     const modalBody = document.getElementById('appointmentDetailModalBody');
- 	if(!modalBody) return;
- 	modalBody.innerHTML = `<p class="text-center"><span class="spinner-border spinner-border-sm"></span> Carregando...</p>`;
- 	try {
- 		let { data: ag, error } = await supabase.from('agendamentos').select(`*, perfis(*), pets(*), servicos(*), lojas(*)`).eq('id_agendamento', appointmentId).single();
- 		if (error) throw error;
- 		if (ag) {
- 			 modalBody.innerHTML = `
- 				 <p><strong>Cliente:</strong> ${ag.perfis?.nome_completo || 'N/A'} (Tel: ${ag.perfis?.telefone || 'N/A'})</p>
- 				 <p><strong>Pet:</strong> ${ag.pets?.nome_pet || 'N/A'} (Espécie: ${ag.pets?.especie || 'N/A'}, Raça: ${ag.pets?.raca || 'N/A'})</p>
- 				 <p><strong>Serviço:</strong> ${ag.servicos?.nome_servico || 'N/A'}</p>
- 				 <p><strong>Loja:</strong> ${ag.lojas?.nome_loja || 'N/A'}</p>
- 				 <p><strong>Data/Hora:</strong> ${formatDateTime(ag.data_hora_inicio)}</p>
- 				 <p><strong>Status Atual:</strong> ${getStatusBadge(ag.status)}</p>
- 				 <p><strong>Observações Cliente:</strong> ${ag.observacoes_cliente || 'Nenhuma'}</p>`;
- 		} else {
- 			 modalBody.innerHTML = `<p class="text-danger">Agendamento não encontrado.</p>`;
- 		}
- 	} catch (error) {
- 		 modalBody.innerHTML = `<p class="text-danger">Erro ao buscar detalhes: ${error.message}</p>`;
- 	}
+    if(!modalBody) return;
+    modalBody.innerHTML = `<p class="text-center"><span class="spinner-border spinner-border-sm"></span> Carregando...</p>`;
+    try {
+        let { data: ag, error } = await supabase.from('agendamentos').select(`*, perfis(*), pets(*), servicos(*), lojas(*)`).eq('id_agendamento', appointmentId).single();
+        if (error) throw error;
+        if (ag) {
+             modalBody.innerHTML = `
+                <p><strong>Cliente:</strong> ${ag.perfis?.nome_completo || 'N/A'} (Tel: ${ag.perfis?.telefone || 'N/A'})</p>
+                <p><strong>Pet:</strong> ${ag.pets?.nome_pet || 'N/A'} (Espécie: ${ag.pets?.especie || 'N/A'}, Raça: ${ag.pets?.raca || 'N/A'})</p>
+                <p><strong>Serviço:</strong> ${ag.servicos?.nome_servico || 'N/A'}</p>
+                <p><strong>Loja:</strong> ${ag.lojas?.nome_loja || 'N/A'}</p>
+                <p><strong>Data/Hora:</strong> ${formatDateTime(ag.data_hora_inicio)}</p>
+                <p><strong>Status Atual:</strong> ${getStatusBadge(ag.status)}</p>
+                <p><strong>Observações Cliente:</strong> ${ag.observacoes_cliente || 'Nenhuma'}</p>`;
+        } else {
+             modalBody.innerHTML = `<p class="text-danger">Agendamento não encontrado.</p>`;
+        }
+    } catch (error) {
+         modalBody.innerHTML = `<p class="text-danger">Erro ao buscar detalhes: ${error.message}</p>`;
+    }
 }
 async function changeAppointmentStatus(appointmentId) {
     const newStatus = prompt(`Digite o novo status (Ex: confirmado, finalizado, cancelado):`);
- 	 if (newStatus && ['confirmado', 'finalizado', 'cancelado', 'pendente'].includes(newStatus.toLowerCase())) {
- 		 try {
- 			 const { error } = await supabase.from('agendamentos').update({ status: newStatus.toLowerCase() }).eq('id_agendamento', appointmentId);
- 			 if (error) throw error;
- 			 alert('Status atualizado!');
- 			 loadAndDisplayAppointments(); // Recarrega a lista
- 		 } catch (error) {
- 			 alert(`Erro ao atualizar status: ${error.message}`);
- 		 }
- 	} else if (newStatus !== null) { 
- 		 alert('Status inválido. Use: confirmado, finalizado, cancelado ou pendente.');
- 	}
+     if (newStatus && ['confirmado', 'finalizado', 'cancelado', 'pendente'].includes(newStatus.toLowerCase())) {
+         try {
+             const { error } = await supabase.from('agendamentos').update({ status: newStatus.toLowerCase() }).eq('id_agendamento', appointmentId);
+             if (error) throw error;
+             alert('Status atualizado!');
+             loadAndDisplayAppointments(); // Recarrega a lista
+         } catch (error) {
+             alert(`Erro ao atualizar status: ${error.message}`);
+         }
+    } else if (newStatus !== null) { 
+         alert('Status inválido. Use: confirmado, finalizado, cancelado ou pendente.');
+    }
 }
 async function cancelAppointment(appointmentId) {
     if (confirm(`Tem certeza que deseja CANCELAR o agendamento ID ${appointmentId}?`)) {
- 		 try {
- 			 const { error } = await supabase.from('agendamentos').update({ status: 'cancelado' }).eq('id_agendamento', appointmentId);
- 			 if (error) throw error;
- 			 alert('Agendamento cancelado.');
- 			 loadAndDisplayAppointments(); // Recarrega a lista
- 		 } catch (error) {
- 			 alert(`Erro ao cancelar: ${error.message}`);
- 		 }
- 	}
+         try {
+             const { error } = await supabase.from('agendamentos').update({ status: 'cancelado' }).eq('id_agendamento', appointmentId);
+             if (error) throw error;
+             alert('Agendamento cancelado.');
+             loadAndDisplayAppointments(); // Recarrega a lista
+         } catch (error) {
+             alert(`Erro ao cancelar: ${error.message}`);
+         }
+    }
 }
 // --- Função para buscar e adicionar UMA linha ---
 async function fetchAndDisplaySingleAppointment(appointmentId) {
@@ -197,21 +197,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3. ADICIONA OS LISTENERS
     document.addEventListener('click', (event) => {
         const target = event.target;
- 	 	const viewButton = target.closest('.btn-view');
- 	 	const editStatusButton = target.closest('.btn-edit-status');
- 	 	const cancelButton = target.closest('.btn-cancel');
- 	 	if (viewButton) {
- 	 		showAppointmentDetails(viewButton.dataset.id);
- 	 		return;
- 	 	}
- 	 	if (editStatusButton) {
- 	 		changeAppointmentStatus(editStatusButton.dataset.id);
- 	 		return;
- 	 	}
- 	 	if (cancelButton) {
- 	 		cancelAppointment(cancelButton.dataset.id);
- 	 		return;
- 	 	}
+        const viewButton = target.closest('.btn-view');
+        const editStatusButton = target.closest('.btn-edit-status');
+        const cancelButton = target.closest('.btn-cancel');
+        if (viewButton) {
+            showAppointmentDetails(viewButton.dataset.id);
+            return;
+        }
+        if (editStatusButton) {
+            changeAppointmentStatus(editStatusButton.dataset.id);
+            return;
+        }
+        if (cancelButton) {
+            cancelAppointment(cancelButton.dataset.id);
+            return;
+        }
     });
 
     // 4. Inicia o "ouvinte" de Realtime

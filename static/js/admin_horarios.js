@@ -394,22 +394,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (capacityManagementContainer) {
         capacityManagementContainer.addEventListener('input', (event) => {
             const target = event.target;
- 			if (target.classList.contains('capacity-input') || target.classList.contains('status-switch')) {
- 				const ruleId = target.dataset.ruleId;
- 				const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
- 				if (saveButton) saveButton.disabled = false;
- 			}
+            if (target.classList.contains('capacity-input') || target.classList.contains('status-switch')) {
+                const ruleId = target.dataset.ruleId;
+                const saveButton = capacityManagementContainer.querySelector(`.btn-save-capacity[data-rule-id="${ruleId}"]`);
+                if (saveButton) saveButton.disabled = false;
+            }
         });
          capacityManagementContainer.addEventListener('click', (event) => {
             const saveButton = event.target.closest('.btn-save-capacity');
- 			 if (saveButton && !saveButton.disabled) {
- 				 const ruleId = saveButton.dataset.ruleId;
- 				 const capacityInput = capacityManagementContainer.querySelector(`#capacity-${ruleId}`);
- 				 const statusSwitch = capacityManagementContainer.querySelector(`#status-${ruleId}`);
- 				 const newCapacity = capacityInput ? parseInt(capacityInput.value) : null;
- 				 const newStatus = statusSwitch ? statusSwitch.checked : null;
- 				 saveCapacityChange(ruleId, newCapacity, newStatus);
- 			 }
+             if (saveButton && !saveButton.disabled) {
+                 const ruleId = saveButton.dataset.ruleId;
+                 const capacityInput = capacityManagementContainer.querySelector(`#capacity-${ruleId}`);
+                 const statusSwitch = capacityManagementContainer.querySelector(`#status-${ruleId}`);
+                 const newCapacity = capacityInput ? parseInt(capacityInput.value) : null;
+                 const newStatus = statusSwitch ? statusSwitch.checked : null;
+                 saveCapacityChange(ruleId, newCapacity, newStatus);
+             }
          });
     }
 

@@ -1,7 +1,29 @@
-import { supabase } from '/js/supabaseClient.js';
+// CAMINHO DE IMPORT CORRIGIDO
+import { supabase } from './supabaseClient.js';
 
 const favoritesListContainer = document.getElementById('favorites-list');
 const noFavoritesMessage = document.getElementById('no-favorites-message');
+
+/**
+ * NOVO: Lê os caminhos do Flask (data- attributes) do HTML
+ */
+function getDynamicPaths() {
+    const container = document.getElementById('favorites-list');
+    if (!container) {
+        console.error("#favorites-list container não encontrado.");
+        // Fallback
+        return { 
+            productUrl: '/produto_detalhe', 
+            basePath: '/static/img/', 
+            placeholder: '/static/img/placeholder.png' 
+        };
+    }
+    return {
+        productUrl: container.dataset.productUrl || '/produto_detalhe',
+        basePath: container.dataset.staticImgPath || '/static/img/',
+        placeholder: container.dataset.placeholderImg || '/static/img/placeholder.png'
+    };
+}
 
 function getFavorites() { return JSON.parse(localStorage.getItem('chateau_favorites')) || []; }
 function saveFavorites(favorites) { localStorage.setItem('chateau_favorites', JSON.stringify(favorites)); }
@@ -11,11 +33,29 @@ function formatPrice(price) {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+/**
+ * FUNÇÃO ATUALIZADA para usar os caminhos dinâmicos
+ */
 function createFavoriteCard(product) {
+    const paths = getDynamicPaths();
+    
+    // Constrói o link do produto
+    const productLink = `${paths.productUrl}?id=${product.id_produto}`;
+    
+    // Constrói o link da imagem
+    let imageUrl = product.url_imagem;
+    if (!imageUrl || imageUrl.trim() === "" || imageUrl.endsWith('null')) {
+        imageUrl = paths.placeholder;
+    } else if (imageUrl && !imageUrl.startsWith('http')) {
+        // Se for um nome de arquivo (ex: 'racao1.webp'), adiciona o caminho estático
+        imageUrl = `${paths.basePath}${imageUrl}`;
+    }
+    // Se for URL completa (http...), usa como está.
+
     return `
         <div class="card-favorite">
-            <a href="/produto.html?id=${product.id_produto}">
-                <img src="${product.url_imagem}" alt="${product.nome_produto}">
+            <a href="${productLink}">
+                <img src="${imageUrl}" alt="${product.nome_produto}">
             </a>
             <div class="card-favorite-body">
                 <h5 class="card-title">${product.nome_produto}</h5>

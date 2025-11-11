@@ -1,10 +1,40 @@
-// js/home.js
-// ====================================================================
-// ARQUIVO MODIFICADO PARA USAR IDs NUMÉRICOS (1, 2, 3, 4)
-// ====================================================================
+// static/js/home.js (VERSÃO COMPLETA E CORRIGIDA)
 
 import { supabase } from './supabaseClient.js'; 
 import { CHATEAU_SELECTED_STORE_KEY } from './geolocator.js'; 
+
+// ====================================================================
+// == CORREÇÃO 1: VERIFICAÇÃO DE LOGIN (ADICIONADO) ==
+// ====================================================================
+const perfilLink = document.getElementById('perfil-text');
+const perfilLinkSidebar = document.getElementById('sidebar-login-link'); 
+
+async function atualizarLinkDeLogin() {
+    if (!perfilLink || !perfilLinkSidebar) {
+        console.warn("Elementos de link de perfil não encontrados.");
+        return; 
+    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const perfilUrl = perfilLink.dataset.perfilUrl; 
+        if (perfilUrl) {
+            perfilLink.href = perfilUrl; 
+            const spanElement = perfilLink.querySelector('span');
+            if (spanElement) {
+                spanElement.textContent = 'Meu Perfil';
+            }
+            perfilLink.title = 'Acessar meu perfil';
+            perfilLinkSidebar.href = perfilUrl;
+            perfilLinkSidebar.textContent = 'Acessar Meu Perfil';
+        } else {
+            console.error("data-perfil-url não encontrado no link #perfil-text.");
+        }
+    }
+}
+// ====================================================================
+// == FIM DA CORREÇÃO 1 ==
+// ====================================================================
+
 
 // ==========================================================================
 // FUNÇÕES ESSENCIAIS DE UX E DADOS (EXPORTADAS PARA BUSCA.JS)
@@ -46,6 +76,9 @@ export function formatPrice(price) {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); 
 }
 
+// ==========================================================================
+// == CORREÇÃO 2: FUNÇÃO createProductCard (Links e Imagens) ==
+// ==========================================================================
 export function createProductCard(produto) { 
     if (!produto || typeof produto.id_produto === 'undefined') { return ''; }
     
@@ -58,13 +91,17 @@ export function createProductCard(produto) {
     const isFavorite = favorites.includes(parseInt(produto.id_produto, 10));
     const heartIconClass = isFavorite ? 'bi-heart-fill' : 'bi-heart';
     
-    const productLink = `produto.html?id=${produto.id_produto}`; 
+    // CORRIGIDO 1: A rota é 'produto_detalhe' (do app.py)
+    const productLink = `produto_detalhe?id=${produto.id_produto}`; 
     
     let imageUrl = produto.url_imagem;
     if (imageUrl && !imageUrl.startsWith('http')) {
-        imageUrl = `img/${produto.url_imagem || 'placeholder.png'}`; 
+        // CORRIGIDO 2: O caminho deve apontar para 'static/img/'
+        imageUrl = `static/img/${produto.url_imagem || 'placeholder.png'}`; 
     }
-    if (!imageUrl || imageUrl.trim() === "") { imageUrl = 'img/placeholder.png'; }
+    if (!imageUrl || imageUrl.trim() === "" || imageUrl.endsWith('null')) { 
+        imageUrl = 'static/img/placeholder.png'; // Caminho completo do placeholder
+    }
     
     return `
         <div class="card h-100 product-card shadow-sm position-relative">
@@ -92,30 +129,23 @@ export function createProductCard(produto) {
         </div>
     `;
 }
+// ==========================================================================
+// == FIM DA CORREÇÃO 2 ==
+// ==========================================================================
 
 
 // ==========================================================================
 // 4. LÓGICA DE GEOLOCALIZAÇÃO E CARREGAMENTO
 // ==========================================================================
 
-/**
- * MODIFICAÇÃO: Pega o ID da loja salva.
- * O padrão agora é '1' (Tatuapé).
- */
 function getSelectedStoreId() {
     const savedStore = localStorage.getItem(CHATEAU_SELECTED_STORE_KEY);
     if (savedStore) {
-        // Garante que o ID salvo seja um número
         return parseInt(JSON.parse(savedStore).id, 10);
     }
-    // ID Padrão (1 = Tatuapé) se não houver nada salvo
     return 1; 
 }
 
-/**
- * MODIFICAÇÃO: Pega o NOME da loja salva.
- * O padrão agora é 'Tatuapé (Principal)'.
- */
 function getSelectedStoreName() {
     const savedStore = localStorage.getItem(CHATEAU_SELECTED_STORE_KEY);
     if (savedStore) {
@@ -195,27 +225,59 @@ function setupSidebar() {
         });
     });
 }
+
+// ==========================================================================
+// == CORREÇÃO 3: FUNÇÃO setupVideoPlayers (Play/Pause/Overlay) ==
+// ==========================================================================
 function setupVideoPlayers() { 
     const videoCards = document.querySelectorAll('.video-card');
+    
     videoCards.forEach(card => {
         const video = card.querySelector('video');
         const playButton = card.querySelector('.play-button');
-        if (video && playButton) {
+        const overlay = card.querySelector('.video-overlay'); // 1. Pega o overlay
+
+        if (video && playButton && overlay) { // 2. Verifica se todos existem
+            
+            // 3. Lógica de Play/Pause corrigida
             const togglePlay = () => {
                 if (video.paused || video.ended) {
                     video.play();
-                    video.muted = false;
-                    card.classList.add('is-playing');
+                    video.muted = false; // Tira o mudo quando o usuário dá play
+                } else {
+                    video.pause(); // <--- FALTAVA ISSO
                 }
             };
+            
             playButton.addEventListener('click', togglePlay);
-            video.addEventListener('click', () => { if (!video.paused) video.pause(); });
-             video.addEventListener('pause', () => { card.classList.remove('is-playing'); });
-             video.addEventListener('ended', () => { card.classList.remove('is-playing'); });
+
+            // 4. Lógica para esconder/mostrar o botão de play
+            video.addEventListener('play', () => {
+                overlay.style.display = 'none'; // Esconde o botão
+            });
+            video.addEventListener('pause', () => {
+                overlay.style.display = 'flex'; // Mostra o botão
+            });
+            video.addEventListener('ended', () => {
+                overlay.style.display = 'flex'; // Mostra o botão quando o vídeo termina
+            });
+            
+            // 5. Permite pausar clicando no próprio vídeo
+            video.addEventListener('click', () => { 
+                if (!video.paused) {
+                    video.pause();
+                }
+            });
         }
     });
+    
+    // Seu código original chamava isso aqui, vamos manter
     setupMediaSliders();
 }
+// ==========================================================================
+// == FIM DA CORREÇÃO 3 ==
+// ==========================================================================
+
 
 function setupMediaSliders() {
     const setupSlider = (trackId, prevId, nextId) => {
@@ -251,39 +313,30 @@ function setupMediaSliders() {
     setupSlider('novidades-track', 'novidades-prev', 'novidades-next');
 }
 
-/**
- * ===================================================================
- * ATUALIZAÇÃO PRINCIPAL: Carrega os produtos da loja selecionada
- * ===================================================================
- */
 function initProductLoading() {
     
-    // Funções de Query:
-    // MODIFICAÇÃO: .eq('id_loja', storeId) está ATIVADO.
-    // Agora vai funcionar, pois storeId é um NÚMERO (1, 2, 3, ou 4).
-
     const ofertasQueryFn = (sb, storeId) => sb.from('produtos')
         .select('*, preco_promocional')
-        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .eq('id_loja', storeId) 
         .not('preco_promocional', 'is', null)
         .order('data_cadastro', { descending: true })
         .limit(8);
     
     const recomendadosQueryFn = (sb, storeId) => sb.from('produtos')
         .select('*')
-        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .eq('id_loja', storeId) 
         .order('data_cadastro', { ascending: false })
         .limit(8);
         
     const novidadesQueryFn = (sb, storeId) => sb.from('produtos')
         .select('*')
-        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .eq('id_loja', storeId) 
         .order('data_cadastro', { ascending: false })
         .limit(8);
 
     const maisVendidosQueryFn = (sb, storeId) => sb.from('produtos')
         .select('*')
-        .eq('id_loja', storeId) // <--- FILTRO DE LOJA ATIVADO
+        .eq('id_loja', storeId) 
         .order('quantidade_estoque', { descending: true })
         .limit(12);
 
@@ -293,9 +346,6 @@ function initProductLoading() {
     loadProducts('mais-vendidos-track', maisVendidosQueryFn, false);
 }
 
-/**
- * Atualiza o texto da loja na barra roxa
- */
 function updateStoreDisplay() {
     const storeName = getSelectedStoreName();
     const storeSpan = document.getElementById('unidade-proxima');
@@ -304,9 +354,6 @@ function updateStoreDisplay() {
     }
 }
 
-/**
- * Configura os cliques no Modal de seleção de loja
- */
 function setupStoreSelection() {
     const storeModal = document.getElementById('storeModal');
     if (!storeModal) return;
@@ -318,17 +365,13 @@ function setupStoreSelection() {
             const storeId = button.dataset.storeId;
             const storeName = button.dataset.storeName;
             
-            // Salva a nova escolha
-            const storeData = { id: parseInt(storeId, 10), name: storeName }; // Salva como número
+            const storeData = { id: parseInt(storeId, 10), name: storeName }; 
             localStorage.setItem(CHATEAU_SELECTED_STORE_KEY, JSON.stringify(storeData));
             
-            // Atualiza o texto na barra
             updateStoreDisplay();
             
-            // Recarrega todos os produtos
             initProductLoading();
 
-            // Fecha o modal
             modalInstance.hide();
         });
     });
@@ -337,6 +380,12 @@ function setupStoreSelection() {
 
 // --- Inicialização da Página ---
 document.addEventListener('DOMContentLoaded', () => {
+    // ======================================================
+    // == ALTERAÇÃO AQUI: Chame a nova função de login ==
+    // ======================================================
+    atualizarLinkDeLogin(); 
+    
+    // O RESTO DO SEU CÓDIGO
     setupSidebar();
     setupVideoPlayers();
     

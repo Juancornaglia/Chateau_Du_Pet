@@ -1,7 +1,6 @@
 // js/login.js
-// VERSÃO COM BACKDOOR INSEGURO (NÃO USE EM PRODUÇÃO!)
+// VERSÃO CORRIGIDA
 
-// CORRIGIDO: O caminho de importação deve ser './' porque os arquivos estão na mesma pasta (js)
 import { supabase } from './supabaseClient.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,14 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('senha').value;
+            
+            // Pega as URLs de redirecionamento do formulário logo no início
+            const homeUrl = loginForm.dataset.homeUrl;
+            const adminUrl = loginForm.dataset.adminDashboardUrl;
 
             // ==========================================================
             // INÍCIO DO CÓDIGO INSEGURO (APENAS PARA TESTE)
-            // AQUI ESTÃO O EMAIL E SENHA QUE VOCÊ PEDIU
             if (email === 'juancornaglia00@gmail.com' && password === 'teste123') {
                 alert('Acesso ADMIN (LOCAL) concedido.');
-                window.location.href = '../admin/dashboard.html';
-                return; // PARA a execução aqui e não vai pro Supabase
+                
+                // ****** ALTERAÇÃO 1 AQUI ******
+                // Corrigido: Redireciona para a URL do Flask, e não para o arquivo .html
+                window.location.href = adminUrl; 
+                // ****** FIM DA ALTERAÇÃO 1 ******
+
+                return; 
             }
             // FIM DO CÓDIGO INSEGURO
             // ==========================================================
@@ -32,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitButton.textContent = 'ACESSANDO...';
 
             try {
-                // PASSO 1: AUTENTICAR (O resto do seu código continua igual)
+                // PASSO 1: AUTENTICAR
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password,
@@ -61,16 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error("Perfil de usuário não encontrado.");
                 }
 
+                // ==========================================================
                 // PASSO 3: REDIRECIONAR
+                // ****** ALTERAÇÃO 2 AQUI ******
+                // As URLs agora são lidas das variáveis 'adminUrl' e 'homeUrl'
+                // que pegamos do formulário no início.
+                // ==========================================================
                 if (perfil.role === 'admin') {
                     alert('Acesso de administrador concedido. Bem-vindo!');
-                    window.location.href = '../admin/dashboard.html';
+                    window.location.href = adminUrl; // CORRIGIDO
                 } else {
-                    const redirectTo = localStorage.getItem('redirectAfterLogin') || '../home.html';
+                    const redirectTo = localStorage.getItem('redirectAfterLogin') || homeUrl; // CORRIGIDO
                     localStorage.removeItem('redirectAfterLogin');
                     alert('Login bem-sucedido! Redirecionando...');
                     window.location.href = redirectTo;
                 }
+                // ****** FIM DA ALTERAÇÃO 2 ******
 
             } catch (error) {
                 console.error('Erro no login:', error.message);

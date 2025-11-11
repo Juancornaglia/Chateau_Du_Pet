@@ -2,9 +2,30 @@ import { supabase } from './supabaseClient.js';
 
 // --- ELEMENTOS DO DOM ---
 const wizard = document.getElementById('agendamento-wizard');
+
+// --- URLs DINÂMICAS (LIDAS DO HTML) ---
+// Adicionamos um fallback, mas o HTML deve fornecer as URLs corretas.
+let LOGIN_URL = '../usuario/login.html';
+let SUCCESS_URL = '../usuario/meus_agendamentos.html';
+
+if (wizard) {
+    if (wizard.dataset.loginUrl) {
+        LOGIN_URL = wizard.dataset.loginUrl;
+    } else {
+        console.error("data-login-url não encontrado em #agendamento-wizard");
+    }
+    if (wizard.dataset.successUrl) {
+        SUCCESS_URL = wizard.dataset.successUrl;
+    } else {
+        console.error("data-success-url não encontrado em #agendamento-wizard");
+    }
+}
+// --- FIM DA SEÇÃO DE URLs ---
+
 const steps = wizard ? wizard.querySelectorAll('.step') : [];
 const progressBar = document.getElementById('step-progressbar');
 const serviceSelect = document.getElementById('service-select');
+// ... (o resto dos seus elementos DOM)
 const nextButtonStep1 = document.getElementById('nextButtonStep1');
 const storeSelect = document.getElementById('store-select');
 const backButtonStep2 = document.getElementById('backButtonStep2');
@@ -29,6 +50,7 @@ const backButtonStep5 = document.getElementById('backButtonStep5');
 const confirmButton = document.getElementById('confirmButton');
 
 // --- ESTADO DO AGENDAMENTO ---
+// ... (o resto do seu código de estado)
 let currentStep = 1;
 const appointmentData = {
     loja_id: null, loja_nome: null,
@@ -39,32 +61,22 @@ const appointmentData = {
     selected_pet_name: null,
     cliente_id: null, cliente_email: null
 };
-
-// ======================================================
-// REGRAS DE NEGÓCIO ATUALIZADAS COM SUAS LOJAS REAIS
-// ======================================================
 const allStoreNames = [
     "Mooca",
     "Tatuapé",
     "Ipiranga",
     "Santos"
 ];
-
-// Lista de lojas que NÃO TÊM o serviço
 const serviceStoreExceptions = {
-    // Baseado nas suas regras: Vet não tem na Loja 4 (Santos)
     "Veterinário": ["Santos"], 
-    
-    // Baseado nas suas regras: Piscina só tem na Loja 5 (Mega Pet - que não está na sua lista de 4)
-    // Vou assumir que SÓ A MOOCA (Loja 1) tem.
     "Natação (Piscina)": ["Tatuapé", "Ipiranga", "Santos"],
-    
-    // Baseado nas suas regras: Hotel SÓ TEM na Loja 1 (Mooca) e 5
     "Hotel - Diária": ["Tatuapé", "Ipiranga", "Santos"] 
 };
 let storeNameIdMap = {};
 
+
 // --- FUNÇÕES DE NAVEGAÇÃO E UI ---
+// ... (showStep, updateProgressBar - sem alterações)
 function showStep(stepNumber) {
     currentStep = stepNumber;
     steps.forEach((step, index) => {
@@ -74,13 +86,13 @@ function showStep(stepNumber) {
 }
 
 function updateProgressBar() {
-    // Adicionado verificador para não quebrar em outras páginas
     if (!progressBar) return; 
     const progressPercentage = ((currentStep - 1) / 4) * 100;
     progressBar.style.width = `${progressPercentage}%`;
     progressBar.textContent = `Passo ${currentStep} de 5`;
     if (currentStep === 5) progressBar.style.width = `100%`;
 }
+
 
 // --- LÓGICA DE VERIFICAÇÃO DE LOGIN ---
 async function checkUserSession() {
@@ -94,11 +106,11 @@ async function checkUserSession() {
         } else {
             alert("Você precisa estar logado para escolher um horário.\n\nVocê será redirecionado para a página de login.");
             localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            
             // ======================================================
-            // CORREÇÃO DO ERRO 404 DO LOGIN
-            // O caminho precisa subir um nível (../)
+            // CAMINHO CORRIGIDO para usar a variável lida do HTML
             // ======================================================
-            window.location.href = '../usuario/login.html'; 
+            window.location.href = LOGIN_URL; 
             return false;
         }
     } catch (error) {
@@ -108,6 +120,7 @@ async function checkUserSession() {
 }
 
 // --- FUNÇÕES DE CARREGAMENTO DE DADOS ---
+// ... (loadServices, loadStores, populateStoreOptions - sem alterações)
 async function loadServices() {
     serviceSelect.disabled = true;
     const { data, error } = await supabase.from('servicos').select('id_servico, nome_servico').order('nome_servico');
@@ -225,7 +238,9 @@ async function loadUserPets() {
     }
 }
 
+
 // --- LÓGICA DO CALENDÁRIO E HORÁRIOS ---
+// ... (renderCalendar, changeMonth, fetchAvailableSlots, displayAvailableSlots, selectDate, selectTimeSlot - sem alterações)
 let currentCalendarDate = new Date();
 function renderCalendar() {
     if (!calendarGrid) return; // Garante que o código não quebre em outras páginas
@@ -257,6 +272,7 @@ function changeMonth(offset) {
 async function fetchAvailableSlots(lojaId, servicoId, dateStr) {
     timeSlotsContainer.innerHTML = '<div class="text-center p-5"><span class="spinner-border spinner-border-sm main-purple-text"></span> Buscando horários...</div>';
     try {
+        // NOTA: A API está fixada para 127.0.0.1. Isso só funciona localmente.
         const response = await fetch(`http://127.0.0.1:5000/api/horarios-disponiveis?loja_id=${lojaId}&servico_id=${servicoId}&data=${dateStr}`);
         if (!response.ok) {
             const errorResult = await response.json();
@@ -312,7 +328,9 @@ function selectTimeSlot(timeStr, buttonElement) {
     nextButtonStep3.disabled = false;
 }
 
+
 // --- LÓGICA DO PASSO 4 (Infos do Pet) e 5 (Confirmação) ---
+// ... (handlePetSelectionChange, handlePetInfoSubmit, saveNewPet, populateConfirmation - sem alterações)
 function handlePetSelectionChange() {
     if (!selectPetElement || !newPetFieldsDiv) return;
     const selectedValue = selectPetElement.value;
@@ -422,7 +440,12 @@ async function confirmAppointment() {
             throw new Error(result.error || `Erro ${response.status}.`);
         }
         alert(`Agendamento realizado com sucesso para ${appointmentData.selected_pet_name || 'seu pet'}!`);
-        window.location.href = '../usuario/meus_agendamentos.html'; // Corrigido para ../
+        
+        // ======================================================
+        // CAMINHO CORRIGIDO para usar a variável lida do HTML
+        // ======================================================
+        window.location.href = SUCCESS_URL;
+        
     } catch (error) {
         console.error("Erro ao confirmar agendamento:", error);
         alert(`Não foi possível confirmar o agendamento: ${error.message}`);
@@ -431,7 +454,9 @@ async function confirmAppointment() {
     }
 }
 
+
 // --- INICIALIZAÇÃO E EVENT LISTENERS GERAIS ---
+// ... (O DOMContentLoaded e todos os listeners - sem alterações)
 document.addEventListener('DOMContentLoaded', async () => {
     // Verifica se estamos na página de agendamento
     if (wizard) { 

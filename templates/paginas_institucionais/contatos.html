@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Contatos | CHATUAL DU PET</title>
     
-    <link rel="icon" type="image/png" href="../img/logo_pequena.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_pequena.png') }}">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
@@ -104,11 +105,11 @@
 <body>
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container">
-             <a class="btn text-white d-flex align-items-center" href="../home.html" style="text-decoration: none;">
+             <a class="btn text-white d-flex align-items-center" href="{{ url_for('home') }}" style="text-decoration: none;">
                  <i class="bi bi-arrow-left me-2"></i>
                  <span class="d-none d-sm-inline">Voltar</span>
              </a>
-             <a class="navbar-brand fw-bold text-white d-flex align-items-center mx-auto" href="../home.html">
+             <a class="navbar-brand fw-bold text-white d-flex align-items-center mx-auto" href="{{ url_for('home') }}">
                  <span class="d-none d-md-inline">CONTATOS E LOCALIZAÇÃO</span>
              </a>
              <div style="width: 80px;"></div>
@@ -154,14 +155,14 @@
             <div class="col-lg-6">
                  <h3 class="fw-bold mb-3">Canais de Atendimento</h3>
                  <div class="list-group shadow-sm">
-                      <a href="https://wa.me/5511991770311" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Mooca</strong><br><small>(11) 99177-0311</small></div></a>
-                      <a href="https://wa.me/5511945277207" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Tatuapé</strong><br><small>(11) 94527-7207</small></div></a>
-                      <a href="https://wa.me/551129253884" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Ipiranga</strong><br><small>(11) 2925-3884</small></div></a>
-                      <a href="https://wa.me/5513974242956" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Santos</strong><br><small>(13) 97424-2956</small></div></a>
-                      
-                      <a href="https://web.facebook.com/chateaudupet" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-facebook fs-4 me-3" style="color: #1877F2;"></i><div><strong>Facebook</strong><br><small>/chateaudupet</small></div></a>
-                      <a href="https://www.instagram.com/chateaudupet/" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-instagram fs-4 me-3" style="color: #E4405F;"></i><div><strong>Instagram</strong><br><small>@chateaudupet</small></div></a>
-                      <a href="mailto:financeiro@chateaudupettatuape.com.br" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-envelope-fill fs-4 me-3"></i><div><strong>E-mail Financeiro</strong><br><small>financeiro@chateaudupettatuape.com.br</small></div></a>
+                       <a href="https://wa.me/5511991770311" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Mooca</strong><br><small>(11) 99177-0311</small></div></a>
+                       <a href="https://wa.me/5511945277207" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Tatuapé</strong><br><small>(11) 94527-7207</small></div></a>
+                       <a href="https://wa.me/551129253884" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Ipiranga</strong><br><small>(11) 2925-3884</small></div></a>
+                       <a href="https://wa.me/5513974242956" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-whatsapp fs-4 me-3" style="color: #25D366;"></i><div><strong>WhatsApp - Santos</strong><br><small>(13) 97424-2956</small></div></a>
+                       
+                       <a href="https://web.facebook.com/chateaudupet" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-facebook fs-4 me-3" style="color: #1877F2;"></i><div><strong>Facebook</strong><br><small>/chateaudupet</small></div></a>
+                       <a href="https://www.instagram.com/chateaudupet/" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-instagram fs-4 me-3" style="color: #E4405F;"></i><div><strong>Instagram</strong><br><small>@chateaudupet</small></div></a>
+                       <a href="mailto:financeiro@chateaudupettatuape.com.br" class="list-group-item list-group-item-action d-flex align-items-center"><i class="bi bi-envelope-fill fs-4 me-3"></i><div><strong>E-mail Financeiro</strong><br><small>financeiro@chateaudupettatuape.com.br</small></div></a>
                  </div>
             </div>
         </div>
@@ -170,15 +171,15 @@
             <div class="col-12">
                  <h3 class="fw-bold mb-3 text-center">Localização da Matriz no Mapa</h3>
                  <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
-                      <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.348004543265!2d-46.61191182379564!3d-23.55593897871216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59063717206f%3A0x6d907a0c5c631e84!2sR.%20do%20Orat%C3%B3rio%2C%20426%20-%20Mooca%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2003116-000!5e0!3m2!1spt-BR!2sbr!4v1731033101889!5m2!1spt-BR!2sbr" 
-                        width="100%" 
-                        height="450" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                      </iframe>
+                       <iframe 
+                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.348004543265!2d-46.61191182379564!3d-23.55593897871216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59063717206f%3A0x6d907a0c5c631e84!2sR.%20do%20Orat%C3%B3rio%2C%20426%20-%20Mooca%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2003116-000!5e0!3m2!1spt-BR!2sbr!4v1731033101889!5m2!1spt-BR!2sbr" 
+                         width="100%" 
+                         height="450" 
+                         style="border:0;" 
+                         allowfullscreen="" 
+                         loading="lazy" 
+                         referrerpolicy="no-referrer-when-downgrade">
+                       </iframe>
                  </div>
             </div>
         </div>
@@ -186,14 +187,14 @@
         <div class="container my-5">
             <h2 class="text-center main-purple-text fw-bold mb-4">Galeria: Nossos Amigos</h2>
             <div class="row g-3">
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal1.webp" alt="Cliente pet 1" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal2.webp" alt="Cliente pet 2" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal3.webp" alt="Cliente pet 3" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal4.webp" alt="Cliente pet 4" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal5.webp" alt="Cliente pet 5" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal6.webp" alt="Cliente pet 6" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal7.webp" alt="Cliente pet 7" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal8.webp" alt="Cliente pet 8" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal1.webp') }}" alt="Cliente pet 1" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal2.webp') }}" alt="Cliente pet 2" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal3.webp') }}" alt="Cliente pet 3" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal4.webp') }}" alt="Cliente pet 4" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal5.webp') }}" alt="Cliente pet 5" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal6.webp') }}" alt="Cliente pet 6" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal7.webp') }}" alt="Cliente pet 7" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal8.webp') }}" alt="Cliente pet 8" class="friend-gallery-img"></div>
             </div>
         </div>
     </main>
@@ -201,10 +202,15 @@
     <footer class="main-footer pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row footer-links mb-4">
-                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="contatos.html" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="contatos.html">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled"><li><a href="../servicos/veterinaria.html">Veterinária 🐾</a></li><li><a href="../servicos/servicos.html">Estética</a></li><li><a href="../servicos/hotel.html">Hotel Pet</a></li><li><a href="../servicos/day_care.html">Day Care</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="lojas.html">Nossas Lojas</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="{{ url_for('institucional_contatos') }}" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="{{ url_for('institucional_contatos') }}">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled">
+                    <li><a href="{{ url_for('servicos_veterinaria') }}">Veterinária 🐾</a></li>
+                    <li><a href="{{ url_for('servicos') }}">Estética</a></li>
+                    <li><a href="{{ url_for('servicos_hotel') }}">Hotel Pet</a></li>
+                    <li><a href="{{ url_for('servicos_day_care') }}">Day Care</a></li>
+                </ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="{{ url_for('institucional_lojas') }}">Nossas Lojas</a></li></ul></div>
             </div>
             <hr class="footer-hr">
             <div class="text-center mt-3 small text-muted">

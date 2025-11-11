@@ -1,4 +1,4 @@
-// js/produtos.js
+// static/js/produtos.js (VERSÃO COMPLETA E CORRIGIDA)
 // Este script busca os produtos no Supabase e exibe na página 'produtos.html'
 
 import { supabase } from './supabaseClient.js';
@@ -9,7 +9,6 @@ function formatPrice(price) {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// Função principal para carregar os produtos
 async function loadPublicProducts() {
     const container = document.getElementById('product-list-container');
     const loading = document.getElementById('loading-products');
@@ -20,9 +19,16 @@ async function loadPublicProducts() {
         return;
     }
 
+    // ======================================================
+    // == CORREÇÃO AQUI: Lendo os 'data-' attributes do HTML ==
+    // ======================================================
+    const detailUrlBase = container.dataset.productLink || 'produto_detalhe';
+    const staticImgPath = container.dataset.staticImgPath || '/static/img/';
+    const placeholderImg = container.dataset.placeholderImg || (staticImgPath + 'placeholder.png');
+
+
     try {
         // 1. Busca os produtos na tabela 'produtos'
-        // (Igual o admin faz, mas agora para mostrar ao público)
         let { data: produtos, error } = await supabase
             .from('produtos')
             .select('id_produto, nome_produto, preco, url_imagem, descricao')
@@ -30,28 +36,33 @@ async function loadPublicProducts() {
 
         if (error) { throw error; }
 
-        // Esconde o "Carregando"
         loading.style.display = 'none';
 
-        // 2. Verifica se encontrou produtos
         if (produtos && produtos.length > 0) {
-            
-            // Limpa o container (caso tenha algo)
             container.innerHTML = ''; 
 
             // 3. Cria um card para cada produto
             produtos.forEach(produto => {
-                // Imagem Padrão (caso 'url_imagem' esteja vazia)
-                const imageUrl = produto.url_imagem || 'img/produto_sem_imagem.png'; 
                 
-                // Limita a descrição (opcional)
+                // ======================================================
+                // == CORREÇÃO AQUI: Usando os caminhos corretos ==
+                // ======================================================
+
+                // Constrói a URL da imagem de forma segura
+                let imageUrl = produto.url_imagem;
+                if (!imageUrl || imageUrl.trim() === "" || imageUrl.endsWith('null')) {
+                    imageUrl = placeholderImg;
+                } else if (imageUrl && !imageUrl.startsWith('http')) {
+                    imageUrl = `${staticImgPath}${imageUrl}`;
+                }
+
+                // Limita a descrição
                 const shortDescription = produto.descricao 
                     ? produto.descricao.substring(0, 100) + (produto.descricao.length > 100 ? '...' : '') 
                     : 'Veja mais detalhes';
 
-                // ESTE É O LINK MÁGICO (a "interação")
-                // Ele leva para a página de 'detalhe' e passa o ID do produto na URL
-                const detailUrl = `produto_detalhe.html?id=${produto.id_produto}`;
+                // CONSTRÓI O LINK CORRETO
+                const detailUrl = `${detailUrlBase}?id=${produto.id_produto}`;
 
                 const cardHtml = `
                     <div class="col-md-4 col-lg-3">
@@ -72,7 +83,6 @@ async function loadPublicProducts() {
             });
 
         } else {
-            // Se não tiver produtos, mostra a mensagem
             noProducts.style.display = 'block';
         }
 

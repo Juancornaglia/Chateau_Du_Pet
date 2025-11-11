@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sobre Nós - Chateau du Pet</title>
-    <link rel="icon" type="image/png" href="../img/logo_pequena.png">
+    
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_pequena.png') }}">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -94,11 +96,11 @@
 <body>
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container">
-            <a class="btn text-white d-flex align-items-center" href="javascript:history.back()">
+            <a class="btn text-white d-flex align-items-center" href="{{ url_for('home') }}">
                 <i class="bi bi-arrow-left me-2"></i>
                 <span class="d-none d-sm-inline">Voltar</span>
             </a>
-            <a class="navbar-brand fw-bold text-white mx-auto" href="../home.html">Sobre Nós</a>
+            <a class="navbar-brand fw-bold text-white mx-auto" href="{{ url_for('home') }}">Sobre Nós</a>
             <div style="width: 80px;"></div> </div>
     </nav>
 
@@ -117,7 +119,7 @@
                 </div>
                 
                 <div class="col-lg-6">
-                    <img src="../img/loja2.webp" class="img-fluid rounded-3 shadow" alt="Fachada da loja Chateau du Pet" style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;">
+                    <img src="{{ url_for('static', filename='img/loja2.webp') }}" class="img-fluid rounded-3 shadow" alt="Fachada da loja Chateau du Pet" style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;">
                 </div>
             </div>
         </div>
@@ -156,18 +158,18 @@
                 <div class="col-lg-6">
                     <h3 class="main-purple-text fw-bold">Clínica Veterinária de Ponta</h3>
                     <p>Contamos com equipamentos modernos e uma equipe de veterinários especializados e prontos para emergências, consultas de rotina, vacinação e cirurgias, cuidando da saúde do seu pet com total dedicação.</p>
-                    <a href="../servicos/veterinaria.html" class="btn btn-custom fw-bold">Conheça a Clínica</a>
+                    <a href="{{ url_for('servicos_veterinaria') }}" class="btn btn-custom fw-bold">Conheça a Clínica</a>
                 </div>
                 <div class="col-lg-6">
                     <div class="row g-2">
                         <div class="col-12">
-                            <img src="../img/veteri_1.webp" alt="Clínica Veterinária" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/veteri_1.webp') }}" alt="Clínica Veterinária" class="service-gallery-img">
                         </div>
                         <div class="col-6">
-                            <img src="../img/veteri_2.webp" alt="Cuidado veterinário" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/veteri_2.webp') }}" alt="Cuidado veterinário" class="service-gallery-img">
                         </div>
                         <div class="col-6">
-                            <img src="../img/veteri_3.webp" alt="Atendimento veterinário" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/veteri_3.webp') }}" alt="Atendimento veterinário" class="service-gallery-img">
                         </div>
                     </div>
                 </div>
@@ -177,18 +179,18 @@
                 <div class="col-lg-6 order-lg-2">
                     <h3 class="main-purple-text fw-bold">Day Care e Hotel com Recreação</h3>
                     <p>Mais do que um hotel, somos uma segunda casa. Nosso Day Care tem monitores treinados, socialização controlada e muito espaço para seu pet gastar energia e fazer amigos em um ambiente seguro e divertido.</p>
-                    <a href="../servicos/day_care.html" class="btn btn-custom fw-bold">Veja o Day Care</a>
+                    <a href="{{ url_for('servicos_day_care') }}" class="btn btn-custom fw-bold">Veja o Day Care</a>
                 </div>
                 <div class="col-lg-6 order-lg-1">
                     <div class="row g-2">
                         <div class="col-12">
-                            <img src="../img/day_care1.webp" alt="Day Care" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/day_care1.webp') }}" alt="Day Care" class="service-gallery-img">
                         </div>
                         <div class="col-6">
-                            <img src="../img/day_care2.webp" alt="Cachorros brincando" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/day_care2.webp') }}" alt="Cachorros brincando" class="service-gallery-img">
                         </div>
                         <div class="col-6">
-                            <img src="../img/day_care3.webp" alt="Recreação Day Care" class="service-gallery-img">
+                            <img src="{{ url_for('static', filename='img/day_care3.webp') }}" alt="Recreação Day Care" class="service-gallery-img">
                         </div>
                     </div>
                 </div>
@@ -198,14 +200,14 @@
         <div class="container my-5">
             <h2 class="text-center main-purple-text fw-bold mb-4">Galeria: Nossos Amigos</h2>
             <div class="row g-3">
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal1.webp" alt="Cliente pet 1" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal2.webp" alt="Cliente pet 2" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal3.webp" alt="Cliente pet 3" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal4.webp" alt="Cliente pet 4" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal5.webp" alt="Cliente pet 5" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal6.webp" alt="Cliente pet 6" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal7.webp" alt="Cliente pet 7" class="friend-gallery-img"></div>
-                <div class="col-lg-3 col-md-4 col-6"><img src="../img/animal8.webp" alt="Cliente pet 8" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal1.webp') }}" alt="Cliente pet 1" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal2.webp') }}" alt="Cliente pet 2" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal3.webp') }}" alt="Cliente pet 3" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal4.webp') }}" alt="Cliente pet 4" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal5.webp') }}" alt="Cliente pet 5" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal6.webp') }}" alt="Cliente pet 6" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal7.webp') }}" alt="Cliente pet 7" class="friend-gallery-img"></div>
+                <div class="col-lg-3 col-md-4 col-6"><img src="{{ url_for('static', filename='img/animal8.webp') }}" alt="Cliente pet 8" class="friend-gallery-img">
             </div>
         </div>
 
@@ -214,10 +216,15 @@
     <footer class="main-footer pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row footer-links mb-4">
-                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="contatos.html" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="contatos.html">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled"><li><a href="../servicos/veterinaria.html">Veterinária 🐾</a></li><li><a href="../servicos/servicos.html">Estética</a></li><li><a href="../servicos/hotel.html">Hotel Pet</a></li><li><a href="../servicos/day_care.html">Day Care</a></li></ul></div>
-                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="lojas.html">Nossas Lojas</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><div class="footer-cta p-4"><h4 class="text-white">Como podemos ajudar?</h4><p class="text-white-50">Conheça mais sobre nós.</p><a href="{{ url_for('institucional_contatos') }}" class="btn btn-light btn-sm fw-bold">Fale Conosco</a></div></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Atendimento</h5><ul class="list-unstyled"><li><a href="{{ url_for('institucional_contatos') }}">Central de Ajuda/FAQ</a></li><li><a href="#">Trocas e Devoluções</a></li></ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Nossos Serviços</h5><ul class="list-unstyled">
+                    <li><a href="{{ url_for('servicos_veterinaria') }}">Veterinária 🐾</a></li>
+                    <li><a href="{{ url_for('servicos') }}">Estética</a></li>
+                    <li><a href="{{ url_for('servicos_hotel') }}">Hotel Pet</a></li>
+                    <li><a href="{{ url_for('servicos_day_care') }}">Day Care</a></li>
+                </ul></div>
+                <div class="col-lg-3 col-md-6 mb-4"><h5>Informações Legais</h5><ul class="list-unstyled"><li><a href="#">Política de Privacidade</a></li><li><a href="{{ url_for('institucional_lojas') }}">Nossas Lojas</a></li></ul></div>
             </div>
             <hr class="footer-hr">
             <div class="text-center mt-3 small text-muted">

@@ -1,127 +1,181 @@
-// js/admin_cms.js
-// Lógica para o editor visual (CMS)
-// CORRIGIDO: Erro de sintaxe na linha 121
+// static/js/admin_cms.js (Versão CORRIGIDA)
 
 import { supabase } from './supabaseClient.js';
-// (A segurança 'checkAdminAuth' está desativada no HTML por enquanto)
 
-// --- Elementos do Modal ---
-const editBannerModal = document.getElementById('editBannerModal');
-const btnEditBanner = document.getElementById('btn-edit-banner');
-const saveBannerButton = document.getElementById('saveBannerButton');
-const modalLoadingSpinner = document.getElementById('modal-loading-spinner');
-const modalFormContent = document.getElementById('modal-form-content');
-
-// Inputs do formulário
-const bannerImgUrlInput = document.getElementById('banner_img_url');
-const bannerTituloInput = document.getElementById('banner_titulo');
-
-/**
- * Carrega os dados atuais do banner do Supabase para o formulário
- */
-async function loadBannerData() {
-    // Mostra o spinner e esconde o form
-    modalLoadingSpinner.style.display = 'block';
-    modalFormContent.style.display = 'none';
-
-    try {
-        // Busca os dois valores da tabela
-        let { data, error } = await supabase
-            .from('cms_content')
-            .select('element_id, content_value')
-            .in('element_id', ['banner_principal_img', 'banner_principal_titulo']);
-        
-        if (error) throw error;
-
-        // Preenche os campos do formulário
-        if (data) {
-            const imgData = data.find(el => el.element_id === 'banner_principal_img');
-            const tituloData = data.find(el => el.element_id === 'banner_principal_titulo');
-
-            if (imgData) {
-                bannerImgUrlInput.value = imgData.content_value;
-            }
-            if (tituloData) {
-                bannerTituloInput.value = tituloData.content_value;
-            }
-        }
-        
-    } catch (error) {
-        console.error("Erro ao carregar conteúdo do banner:", error.message);
-        alert("Erro ao carregar dados. Verifique o console.");
-    } finally {
-        // Esconde o spinner e mostra o form
-        modalLoadingSpinner.style.display = 'none';
-        modalFormContent.style.display = 'block';
+// Função para recarregar o iframe de preview
+function reloadIframe() {
+    const iframe = document.getElementById('previewIframe');
+    if (iframe) {
+        iframe.contentWindow.location.reload();
     }
 }
 
-/**
- * Salva os novos dados do banner no Supabase
- */
-async function saveBannerData() {
-    const newImgUrl = bannerImgUrlInput.value;
-    const newTitulo = bannerTituloInput.value;
-
-    saveBannerButton.disabled = true;
-    saveBannerButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
-
-    try {
-        const dataToUpsert = [
-            {
-                element_id: 'banner_principal_img',
-                content_type: 'image_url',
-                content_value: newImgUrl,
-                updated_at: new Date()
-            },
-            {
-                element_id: 'banner_principal_titulo',
-                content_type: 'text',
-                content_value: newTitulo,
-                updated_at: new Date()
-            }
-        ];
-
-        // Upsert: Atualiza se existir, insere se não existir
-        const { error } = await supabase
-            .from('cms_content')
-            .upsert(dataToUpsert, { onConflict: 'element_id' });
-
-        if (error) throw error;
-
-        alert('Banner salvo com sucesso!');
-        
-        // Fecha o modal (Bootstrap)
-        const modalInstance = bootstrap.Modal.getInstance(editBannerModal);
-        modalInstance.hide();
-        
-        // Recarrega o iframe para mostrar a alteração
-        const iframe = document.querySelector('iframe');
-        if (iframe) {
-            iframe.src = iframe.src; 
-        }
-
-    } catch (error) {
-        console.error("Erro ao salvar conteúdo do banner:", error.message);
-        alert("Erro ao salvar. Verifique o console.");
-    } finally {
-        saveBannerButton.disabled = false;
-        saveBannerButton.textContent = 'Salvar Alterações';
+// --- Funções Genéricas para CMS ---
+async function fetchCmsComponent(componentName) {
+    const response = await fetch(`/api/cms/componente/${componentName}`);
+    if (response.ok) {
+        return response.json();
+    } else if (response.status === 404) {
+        console.warn(`Componente CMS '${componentName}' não encontrado, retornando vazio.`);
+        return {}; // Retorna um objeto vazio se não for encontrado
+    } else {
+        const errorData = await response.json();
+        throw new Error(`Erro ao buscar ${componentName}: ${errorData.error}`);
     }
 }
 
-// --- Event Listeners ---
-if (editBannerModal) {
-    // Quando o modal for aberto, carrega os dados
-    editBannerModal.addEventListener('show.bs.modal', () => {
-        loadBannerData();
+async function saveCmsComponent(componentName, data) {
+    const response = await fetch(`/api/cms/componente/${componentName}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Erro ao salvar ${componentName}: ${errorData.error}`);
+    }
+    return response.json();
 }
 
-if (saveBannerButton) {
-    // Quando o botão Salvar for clicado
-    // CORRIGIDO: Removido o '_' extra
-    saveBannerButton.addEventListener('click', () => {
-        saveBannerData();
-    });
-}
+// --- Lógica do Banner Principal ---
+document.getElementById('btn-edit-banner').addEventListener('click', async () => {
+    const loadingSpinner = document.getElementById('modal-banner-loading-spinner');
+    const formContent = document.getElementById('modal-banner-form-content');
+    
+    loadingSpinner.style.display = 'block';
+    formContent.style.display = 'none';
+
+    try {
+        const data = await fetchCmsComponent('banner_principal');
+        document.getElementById('banner_img_url').value = data.img_url || '';
+        document.getElementById('banner_titulo').value = data.titulo || '';
+        document.getElementById('banner_texto').value = data.texto || '';
+        document.getElementById('banner_link').value = data.link || '';
+    } catch (error) {
+        console.error("Erro ao carregar banner:", error);
+        alert(`Erro ao carregar banner: ${error.message}`);
+    } finally {
+        loadingSpinner.style.display = 'none';
+        formContent.style.display = 'block';
+    }
+});
+
+document.getElementById('saveBannerButton').addEventListener('click', async () => {
+    const button = document.getElementById('saveBannerButton');
+    button.disabled = true;
+    button.textContent = 'Salvando...';
+
+    const img_url = document.getElementById('banner_img_url').value;
+    const titulo = document.getElementById('banner_titulo').value;
+    const texto = document.getElementById('banner_texto').value;
+    const link = document.getElementById('banner_link').value;
+
+    try {
+        await saveCmsComponent('banner_principal', { img_url, titulo, texto, link });
+        alert('Banner principal salvo com sucesso!');
+        reloadIframe();
+        // Fecha o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editBannerModal'));
+        if (modal) modal.hide();
+    } catch (error) {
+        console.error("Erro ao salvar banner:", error);
+        alert(`Erro ao salvar banner: ${error.message}`);
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Salvar Alterações';
+    }
+});
+
+// --- Lógica do Bloco de Texto ---
+document.getElementById('btn-edit-text').addEventListener('click', async () => {
+    const loadingSpinner = document.getElementById('modal-text-loading-spinner');
+    const formContent = document.getElementById('modal-text-form-content');
+    
+    loadingSpinner.style.display = 'block';
+    formContent.style.display = 'none';
+
+    try {
+        const data = await fetchCmsComponent('bloco_de_texto');
+        document.getElementById('text_titulo').value = data.titulo || '';
+        document.getElementById('text_conteudo').value = data.conteudo || '';
+    } catch (error) {
+        console.error("Erro ao carregar bloco de texto:", error);
+        alert(`Erro ao carregar bloco de texto: ${error.message}`);
+    } finally {
+        loadingSpinner.style.display = 'none';
+        formContent.style.display = 'block';
+    }
+});
+
+document.getElementById('saveTextButton').addEventListener('click', async () => {
+    const button = document.getElementById('saveTextButton');
+    button.disabled = true;
+    button.textContent = 'Salvando...';
+
+    const titulo = document.getElementById('text_titulo').value;
+    const conteudo = document.getElementById('text_conteudo').value;
+
+    try {
+        await saveCmsComponent('bloco_de_texto', { titulo, conteudo });
+        alert('Bloco de texto salvo com sucesso!');
+        reloadIframe();
+        // Fecha o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editTextModal'));
+        if (modal) modal.hide();
+    } catch (error) {
+        console.error("Erro ao salvar bloco de texto:", error);
+        alert(`Erro ao salvar bloco de texto: ${error.message}`);
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Salvar Alterações';
+    }
+});
+
+// --- Lógica da Imagem Simples ---
+document.getElementById('btn-edit-image').addEventListener('click', async () => {
+    const loadingSpinner = document.getElementById('modal-image-loading-spinner');
+    const formContent = document.getElementById('modal-image-form-content');
+    
+    loadingSpinner.style.display = 'block';
+    formContent.style.display = 'none';
+
+    try {
+        const data = await fetchCmsComponent('imagem_simples');
+        document.getElementById('image_url').value = data.url || '';
+        document.getElementById('image_alt').value = data.alt || '';
+        document.getElementById('image_link').value = data.link || '';
+    } catch (error) {
+        console.error("Erro ao carregar imagem simples:", error);
+        alert(`Erro ao carregar imagem simples: ${error.message}`);
+    } finally {
+        loadingSpinner.style.display = 'none';
+        formContent.style.display = 'block';
+    }
+});
+
+document.getElementById('saveImageButton').addEventListener('click', async () => {
+    const button = document.getElementById('saveImageButton');
+    button.disabled = true;
+    button.textContent = 'Salvando...';
+
+    const url = document.getElementById('image_url').value;
+    const alt = document.getElementById('image_alt').value;
+    const link = document.getElementById('image_link').value;
+
+    try {
+        await saveCmsComponent('imagem_simples', { url, alt, link });
+        alert('Imagem simples salva com sucesso!');
+        reloadIframe();
+        // Fecha o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editImageModal'));
+        if (modal) modal.hide();
+    } catch (error) {
+        console.error("Erro ao salvar imagem simples:", error);
+        alert(`Erro ao salvar imagem simples: ${error.message}`);
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Salvar Alterações';
+    }
+});
