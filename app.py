@@ -1,4 +1,4 @@
-# backend/app.py — Versão Final Unificada (Agendamento + E-commerce + CORS Ajustado)
+# backend/app.py — Versão Corrigida
 
 import os
 from flask import Flask, jsonify, request, render_template, redirect, url_for
@@ -14,7 +14,7 @@ load_dotenv()
 # --- 2. CONFIGURAÇÃO DO CLIENTE SUPABASE ---
 # As variáveis de ambiente deveriam ser carregadas, mas estão sendo sobrescritas
 url: str = os.getenv("https://lslnyyfpwxhwsesnihfj.supabase.co")
-key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI") 
+key: str = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbG55eWZwd3hod3Nlc25paGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5NjE5NDEsImV4cCI6MjA3NzUzNzk0MX0.o1yO79aBHvDt6MQ5PRhMPsl4Qzad6SuA8HDTbn73TgI")
 
 # Valores hardcoded (como no seu exemplo)
 url = "https://lslnyyfpwxhwsesnihfj.supabase.co"
@@ -36,14 +36,12 @@ HORA_FIM_PADRAO = time(18, 0)
 INTERVALO_SLOT_MINUTOS = 30  # Granularidade dos horários
 
 # --- 4. CONFIGURAÇÃO DO FLASK E CORS ---
-# Assumindo que os templates estão na pasta 'frontend' no nível acima
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
-# Assumindo que os arquivos estáticos (css, js, img) estão em 'frontend/static'
-static_dir = os.path.join(template_dir, 'static')
 
-# Se 'static' não for a pasta, ajuste 'static_folder'
-# Se seus templates estão em 'backend/templates', use: app = Flask(__name__)
-app = Flask(__name__, template_folder=template_dir, static_folder=template_dir)
+# ****** AQUI ESTÁ A MUDANÇA ******
+# O Flask agora usa a configuração padrão.
+# Ele vai procurar automaticamente pela pasta "templates" e "static"
+# no mesmo diretório do app.py, que é a sua estrutura correta.
+app = Flask(__name__)
 
 
 # Permitir chamadas do Netlify (produção) e de testes locais
@@ -62,8 +60,6 @@ CORS(app, origins=origins, methods=["GET", "POST", "OPTIONS"])
 @app.route('/img/<path:filename>')
 def imagens(filename):
     # Redireciona para /static/img/filename
-    # Verifique se seus arquivos de imagem estão em 'frontend/img' ou 'frontend/static/img'
-    # Se estiver em 'frontend/img', o static_url_path precisa ser ajustado
     return redirect(url_for('static', filename=f'img/{filename}'))
 
 @app.route('/videos/<path:filename>')
@@ -189,7 +185,7 @@ def usuario_perfil():
 
 @app.route('/usuario/redefinir-senha')
 def usuario_redefinir_senha():
-    return render_template('usuario/redefinir_senha.html')
+    return render_template('usuario/redefinir-senha.html')
 
 # --- 5. ROTA DE TESTE (Health Check) ---
 @app.route('/api/', methods=['GET'])
