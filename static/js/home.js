@@ -1,4 +1,4 @@
-// static/js/home.js (VERSÃO COMPLETA E CORRIGIDA)
+// static/js/home.js (VERSÃO FINAL COM TODAS AS CORREÇÕES)
 
 import { supabase } from './supabaseClient.js'; 
 import { CHATEAU_SELECTED_STORE_KEY } from './geolocator.js'; 
@@ -380,9 +380,7 @@ function setupStoreSelection() {
 
 // --- Inicialização da Página ---
 document.addEventListener('DOMContentLoaded', () => {
-    // ======================================================
-    // == ALTERAÇÃO AQUI: Chame a nova função de login ==
-    // ======================================================
+    // CHAMA A FUNÇÃO DE LOGIN
     atualizarLinkDeLogin(); 
     
     // O RESTO DO SEU CÓDIGO

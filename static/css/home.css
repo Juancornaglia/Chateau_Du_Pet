@@ -109,23 +109,21 @@ button, input, textarea, select { font-family: inherit; }
 .slider-nav.prev-btn { left: -15px; }
 .slider-nav.next-btn { right: -15px; }
 
-/* Bloco de "Ver mais" */
+
 .product-slider-wrapper > .mb-4 {
     padding-left: 30px;
     padding-right: 30px; 
 }
 .container > h2 { padding-left: 30px; }
 
-/* Esta é a sua regra de responsividade original - ela está correta! */
 @media (max-width: 767px) {
     .product-slider-wrapper > .mb-4 {
         padding-left: 15px;
         padding-right: 15px;
     }
     .container > h2 { padding-left: 15px; }
-    .slider-nav { display: none; } /* Esconde as setas laterais no celular */
+    .slider-nav { display: none; }
 }
-
 .product-slider-wrapper > .mb-4 a {
     font-size: 0.9rem;
     text-wrap: nowrap; 
@@ -152,20 +150,35 @@ button, input, textarea, select { font-family: inherit; }
 .menu-item.open .submenu { display: block; }
 #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; }
 #overlay.active { display: block; }
+
+/* --- PROMO GRID (Onde está o banner) --- */
 .promo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; align-items: stretch; }
 .promo-card { background-color: #f8f9fa; border-radius: 16px; border: 1px solid #e9ecef; overflow: hidden; display: flex; }
 .promo-card-img { width: 45%; object-fit: cover; }
 .promo-card-content { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; width: 55%; }
 .btn-promo { background-color: #fff; color: var(--chateau-purple); border: 2px solid var(--chateau-purple); border-radius: 20px; padding: 0.5rem 1rem; text-decoration: none; font-weight: bold; transition: all 0.3s ease; }
 .btn-promo:hover { background-color: var(--chateau-purple); color: #fff; }
-.promo-banner { display: block; border-radius: 16px; overflow: hidden; }
-.promo-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Esta é a sua regra de responsividade original - ela está correta! */
-@media (max-width: 992px) { 
-    .promo-grid { grid-template-columns: 1fr; } 
+/* =================================================================== */
+/* --- CORREÇÃO DO BANNER --- */
+/* =================================================================== */
+.promo-banner { 
+    display: block; 
+    border-radius: 16px; 
+    overflow: hidden; 
+    width: 100%; /* Garante que o link ocupe o espaço */
 }
+.promo-banner img { 
+    width: 100%;    /* <-- FORÇA A IMAGEM A PREENCHER A LARGURA */
+    height: auto;   /* <-- DEIXA A ALTURA AJUSTAR (Evita distorção) */
+    object-fit: cover; 
+    display: block; 
+}
+/* =================================================================== */
+/* --- FIM DA CORREÇÃO --- */
+/* =================================================================== */
 
+@media (max-width: 992px) { .promo-grid { grid-template-columns: 1fr; } }
 .main-footer { background-color: #f8f8f8; border-top: 1px solid #ddd; color: #333; font-size: 0.95rem; }
 .main-footer h5 { font-size: 1.1rem; font-weight: bold; color: var(--chateau-purple); margin-bottom: 1rem; }
 .main-footer a { color: #6c757d; text-decoration: none; line-height: 2; transition: color 0.2s; }
@@ -188,88 +201,71 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 /* =================================================================== */
-/* --- ADICIONADO: Seção de Responsividade para Celular --- */
+/* --- Seção de Responsividade (Media Queries) --- */
 /* =================================================================== */
 
-/* Telas de tablet e celular (menor que 768px) */
 @media (max-width: 767.98px) {
-
-    /* Ajusta o banner principal para não ser tão alto */
+    .slider-nav { 
+        display: none; 
+    }
+    .product-slider-wrapper > .mb-4 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .container > h2 { 
+        padding-left: 15px; 
+    }
     #bannerCarousel .carousel-inner img {
         height: 200px; 
     }
-
-    /* * Faz as "pílulas" de serviço quebrarem a linha em vez de rolar.
-     */
     .services-row {
-        flex-wrap: wrap; /* Permite que os itens quebrem a linha */
-        overflow-x: hidden; /* Remove o scroll horizontal desnecessário */
+        flex-wrap: wrap; 
+        overflow-x: hidden; 
         padding-bottom: 0;
-        
-        /* Centraliza os itens quando eles quebram a linha */
         justify-content: center; 
     }
     .service-pill {
-        /* Faz com que 2 ou 3 pílulas caibam por linha */
-        flex-grow: 1; /* Permite que cresçam para preencher o espaço */
-        flex-basis: 160px; /* Define um 'tamanho base' menor */
-        min-width: 160px; /* Garante que não fiquem muito pequenos */
-        width: auto; /* Deixa o flex-basis controlar o tamanho */
+        flex-basis: calc(50% - 6px); 
+        min-width: 160px; 
+        width: auto;
     }
-
-    /* * Ajusta os sliders de produto para telas pequenas
-     */
     .slider-track {
-        /* Adiciona um padding para os cards não colarem na borda */
-        padding-left: 15px;
-        padding-right: 15px;
-        gap: 1rem; /* Diminui o espaço entre os cards */
+        padding: 0 15px; 
+        gap: 1rem; 
     }
     .slider-track .card {
-        /* Reduz o tamanho do card para caber melhor */
-        flex: 0 0 240px; 
+        flex: 0 0 220px; 
     }
-
-    /* Ajusta os sliders de mídia (Amigos e Vídeos) */
     .card-media {
-        flex: 0 0 260px; /* Um pouco menor que os 300px originais */
+        flex: 0 0 260px;
         height: 180px;
     }
-    
-    /* Diminui o botão de play do vídeo */
     .play-button {
-        font-size: 3rem;
+        font-size: 3rem; 
     }
-
-    /* * Ajusta o grid de promoção (Retire na Loja)
-     */
+    .promo-grid { 
+        grid-template-columns: 1fr; 
+    }
     .promo-card {
-        /* Empilha a imagem e o texto */
         flex-direction: column; 
     }
     .promo-card-img,
     .promo-card-content {
-        width: 100%; /* Faz ambos ocuparem a largura total */
+        width: 100%; 
     }
 }
 
-/* Telas de celular bem pequenas (menor que 480px) */
 @media (max-width: 480px) {
-    /* Diminui o texto da barra de localização */
     .location-bar {
         font-size: 12px;
     }
-    
-    /* Garante que os pills de serviço ocupem mais espaço */
     .service-pill {
-        flex-basis: 100%; /* Faz ficar um por linha */
+        flex-basis: 100%; 
     }
-
-    /* Faz os cards do slider ocuparem mais a tela */
     .slider-track .card {
-        flex: 0 0 75%; /* Mostra um card e um pedaço do próximo */
+        flex: 0 0 70%; 
     }
     .card-media {
-        flex: 0 0 80%;
+        flex: 0 0 75%;
     }
 }

@@ -189,7 +189,7 @@
             </div>
         </section>
 
-         <section class="container my-5">
+        <section class="container my-5">
             <div class="promo-grid">
                 <div class="promo-card">
                     <img src="{{ url_for('static', filename='img/Chateau.ico') }}" alt="Logo Chateau du Pet" class="promo-card-img">
@@ -198,8 +198,8 @@
                         <a href="{{ url_for('institucional_lojas') }}" class="btn-promo">Ver nossas lojas</a>
                     </div>
                 </div>
-                <a href="#" class="promo-banner">
-                    <img src="{{ url_for('static', filename='img/banner6.png') }}" alt="Banner de entrega rápida">
+                <a href="{{ url_for('servicos_agendamento_fluxo') }}" class="promo-banner">
+                    <img src="{{ url_for('static', filename='img/banner.jpeg') }}" alt="Agende aqui seu atendimento">
                 </a>
             </div>
         </section>
@@ -233,7 +233,6 @@
                 </div>
                 <button class="slider-nav prev-btn" id="videos-prev"><i class="bi bi-chevron-left"></i></button>
                 <div class="slider-track" id="videos-track">
-                    
                     <div class="card-media video-card"><video muted preload="metadata"><source src="{{ url_for('static', filename='videos/video1.mp4') }}" type="video/mp4"></video><div class="video-overlay"><button class="play-button"><i class="bi bi-play-circle-fill"></i></button></div></div>
                     <div class="card-media video-card"><video muted preload="metadata"><source src="{{ url_for('static', filename='videos/video2.mp4') }}" type="video/mp4"></video><div class="video-overlay"><button class="play-button"><i class="bi bi-play-circle-fill"></i></button></div></div>
                     <div class="card-media video-card"><video muted preload="metadata"><source src="{{ url_for('static', filename='videos/video1.mp4') }}" type="video/mp4"></source></video><div class="video-overlay"><button class="play-button"><i class="bi bi-play-circle-fill"></i></button></div></div>
